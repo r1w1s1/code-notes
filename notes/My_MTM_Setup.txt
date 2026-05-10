@@ -1,0 +1,252 @@
+MY MTM SETUP
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| mtm gives me simple pane management inside a single terminal.    |
+| One st window, multiple panes, keyboard-driven workflow.         |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+I use mtm to avoid opening many terminal windows.
+
+Instead of managing multiple st instances, I keep everything
+inside a single terminal with lightweight pane splitting.
+
+Setup:
+
+    st + mtm + nvi + coreutils
+
+Simple, fast, and easy to manage.
+
+
+BACKGROUND
+
+mtm is the Micro Terminal Multiplexer.
+
+It focuses on:
+
+    - simplicity
+    - compatibility
+    - small size
+    - stability
+
+Unlike larger terminal multiplexers, mtm intentionally avoids
+dozens of commands, modes, plugins, or complex configuration.
+
+The entire workflow stays minimal and predictable.
+
+The upstream project describes mtm as:
+
+    "There are no modes, no dozens of commands,
+     no crazy feature list."
+
+This matches my workflow very well. :contentReference[oaicite:1]{index=1}
+
+
+WHY I MOVED FROM GNU SCREEN
+
+GNU screen is stable and powerful, but its split workflow
+always felt awkward for local desktop usage.
+
+Creating splits usually requires multiple steps:
+
+    - create split
+    - change focus
+    - create shell/window manually
+
+mtm behaves more naturally:
+
+    - create pane
+    - shell already available
+    - start working
+
+Pane movement and navigation also feel simpler and more direct.
+
+GNU screen exposes more internal concepts like:
+
+    - windows
+    - regions
+    - copy modes
+
+mtm keeps the interaction model much smaller.
+
+
+WORKFLOW
+
+A typical workflow looks like:
+
+    - one st window
+    - multiple panes
+    - each pane running a shell or nvi
+
+Most of my work happens inside a single mtm session.
+
+Examples:
+
+    - editing files with nvi
+    - monitoring logs
+    - running kubectl commands
+    - checking git repositories
+    - using shell utilities side by side
+
+The goal is simple:
+
+    one terminal, everything inside
+
+
+NAVIGATION
+
+mtm uses a very small set of keyboard commands.
+
+The default command prefix is:
+
+    Ctrl+g
+
+Movement between panes:
+
+    Ctrl+g + Arrow Keys
+
+Examples:
+
+    Ctrl+g Left Arrow
+    Ctrl+g Right Arrow
+    Ctrl+g Up Arrow
+    Ctrl+g Down Arrow
+
+Switch to previous pane:
+
+    Ctrl+g o
+
+Scrolling is straightforward:
+
+    PgUp
+    PgDown
+    End
+
+No complicated copy mode or extra navigation layers are required.
+
+
+PANE MANAGEMENT
+
+Pane management is intentionally minimal.
+
+Create horizontal split:
+
+    Ctrl+g h
+
+Create vertical split:
+
+    Ctrl+g v
+
+Close current pane:
+
+    Ctrl+g w
+
+Redraw screen:
+
+    Ctrl+g l
+
+The workflow feels lightweight because new panes immediately
+start with a shell already available.
+
+There is no need to manually create shells after splitting,
+which makes the workflow faster than GNU screen for local use.
+
+
+DESIGN PHILOSOPHY
+
+mtm intentionally avoids runtime configuration complexity.
+
+Most customization happens at compile time through:
+
+    config.h
+
+This matches my preference for:
+
+    - small tools
+    - simple defaults
+    - keyboard-driven workflows
+    - predictable behavior
+
+The source code itself stays very small compared to larger
+terminal multiplexers. :contentReference[oaicite:2]{index=2}
+
+
+CHEATSHEET
+
+File: ~/.mtm-cheatsheet.txt
+
+    PREFIX: Ctrl+g
+
+    Panes:
+      Ctrl+g h       horizontal split
+      Ctrl+g v       vertical split
+      Ctrl+g w       close pane
+      Ctrl+g l       redraw screen
+
+    Navigation:
+      Ctrl+g Left    focus left
+      Ctrl+g Right   focus right
+      Ctrl+g Up      focus up
+      Ctrl+g Down    focus down
+      Ctrl+g o       previous pane
+
+    Scrollback:
+      PgUp           scroll up
+      PgDown         scroll down
+      End            recenter
+
+    Sessions:
+      mtm            start mtm
+
+
+QUICK ACCESS
+
+    alias mtmhelp='cat ~/.mtm-cheatsheet.txt'
+
+Then:
+
+    $ mtmhelp
+
+
+ADVANTAGES
+
+    - very small and lightweight
+    - simple pane workflow
+    - predictable navigation
+    - minimal interface
+    - fast local workflow
+    - integrates naturally with st and dwm
+    - almost no configuration required
+
+
+LIMITATIONS
+
+    - fewer advanced features
+    - smaller ecosystem compared to tmux
+    - not focused on remote session persistence
+    - customization mostly done at compile time
+
+
+CONCLUSION
+
+mtm fits my workflow better than GNU screen for local desktop use.
+
+It focuses on the things I actually need:
+
+    - panes
+    - shells
+    - keyboard navigation
+    - simplicity
+
+One terminal.
+Multiple panes.
+No unnecessary complexity.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-05-09

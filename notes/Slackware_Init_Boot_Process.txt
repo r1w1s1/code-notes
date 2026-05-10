@@ -1,0 +1,284 @@
+SLACKWARE INIT SYSTEM AND BOOT PROCESS
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| Slackware uses a traditional init system. The entire boot        |
+| process is driven by a small C program reading a text file,      |
+| then executing shell scripts. There is no binary unit system,    |
+| no dependency graph, no socket activation. Just code you can     |
+| read, understand, and modify with a text editor.                 |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+In the age of systemd, many Linux users have never seen a real init
+script. They know systemctl and journalctl, but have no clear picture
+of what actually happens when the kernel hands control over to
+userspace.
+
+Slackware, one of the oldest living Linux distributions, still uses
+a traditional init system. The entire boot process is readable in an
+afternoon.
+
+If something breaks, you can reason about it because it is just shell
+scripts running top to bottom. If you want something to happen at
+boot, you put it in a file and make it executable.
+
+This article walks through the Slackware boot process from the moment
+the kernel starts to the moment you see a login prompt. Scripts
+covered here are from Slackware -current.
+
+Quick note on conventions: manual page references appear like this:
+init(8), where the number in parentheses is the manual section.
+Read them with:
+
+    man 8 init
+
+
+BOOT FLOW
+
+    kernel -> /sbin/init -> /etc/inittab -> rc.S -> rc.M -> login
+                                                         |
+                                               rc.0 / rc.6 (halt/reboot)
+
+
+SYSTEMD VS SYSVINIT — CHEAT SHEET
+
+If you are coming from Ubuntu or Fedora, this table maps familiar
+concepts to their Slackware equivalents.
+
+    Concept              Systemd (Ubuntu/Fedora)      Slackware (sysvinit)
+    -------              -----------------------      --------------------
+    The manager          systemd (large binary)       sysvinit (small C program)
+    Startup logic        dependency graph (parallel)  linear scripts (top-to-bottom)
+    Boot config          /etc/systemd/* units         /etc/inittab
+    Runlevels            targets                     numeric (3=multiuser, 4=X11)
+    Enable a service     systemctl enable foo         chmod +x /etc/rc.d/rc.foo
+    Disable a service    systemctl disable foo        chmod -x /etc/rc.d/rc.foo
+    Check service state  systemctl status foo         ls -l /etc/rc.d/rc.foo
+    Custom boot tweaks   .service files               /etc/rc.d/rc.local
+    Logs                 journalctl -xe               /var/log + syslog
+    Troubleshoot boot    systemd-analyze              read the script
+
+
+FROM KERNEL TO USERSPACE
+
+Once the kernel has initialized memory management and attached
+drivers to hardware, it starts exactly one userspace process:
+
+    /sbin/init
+
+Everything else descends from this single process.
+
+init runs as PID 1. It must never die. If it crashes, the kernel
+panics. It is the ancestor of every process on the system.
+
+On Slackware, /sbin/init is the sysvinit(8) binary—a small C program,
+not a shell script. The kernel requires a real executable as PID 1
+because it must:
+
+    - read /etc/inittab before any shell is available
+    - manage runlevel transitions reliably
+    - respawn login processes
+    - catch kernel signals (e.g., Ctrl+Alt+Del)
+    - reap orphaned child processes
+
+A shell script exits when it reaches the end. init never exits.
+That is why PID 1 must be a compiled program.
+
+
+/etc/inittab
+
+After starting, init(8) reads /etc/inittab(5). This file defines the
+entire system behavior.
+
+Format:
+
+    id:runlevels:action:process
+
+
+    id:3:initdefault:
+
+Sets the default runlevel to 3 (multiuser mode).
+
+Slackware runlevels:
+
+    0 = halt
+    1 = single-user
+    3 = multiuser (default)
+    4 = graphical (X11/Wayland via display manager)
+    6 = reboot
+
+Never set initdefault to 0 or 6.
+
+
+    si:S:sysinit:/etc/rc.d/rc.S
+
+Runs once at boot, before entering any runlevel. rc.S performs
+low-level system initialization.
+
+
+    rc:2345:wait:/etc/rc.d/rc.M
+
+For runlevels 2–5, rc.M is executed and init waits for it to finish.
+This brings the system to full multiuser state.
+
+
+    ca::ctrlaltdel:/sbin/shutdown -t5 -r now
+
+Handles Ctrl+Alt+Del cleanly.
+
+
+    c1:12345:respawn:/sbin/agetty --noclear 38400 tty1 linux
+
+Keeps login prompts alive. When you log out, init respawns agetty.
+
+
+    x1:4:respawn:/etc/rc.d/rc.4
+
+In runlevel 4, starts the display manager and restarts it if needed.
+
+That is the entire boot configuration—in one readable file.
+
+
+/etc/rc.d/rc.S — SYSTEM INITIALIZATION
+
+rc.S runs once, very early. At this point:
+
+    - root is read-only
+    - /proc and /sys are not mounted
+    - /dev is mostly empty
+    - no network exists
+
+
+Mount virtual filesystems:
+
+    /sbin/mount -v proc /proc -t proc
+    /sbin/mount -v sysfs /sys -t sysfs
+
+These expose kernel and hardware state to userspace.
+
+
+Start device management:
+
+    /etc/rc.d/rc.udev start
+
+udev dynamically creates device nodes in /dev.
+
+
+Check filesystem:
+
+    /sbin/fsck $FORCEFSCK -C -a /
+
+Fixes inconsistencies after crashes.
+
+    /etc/fastboot   -> skip check once
+    /etc/forcefsck  -> force check
+
+
+Remount root read-write:
+
+    /sbin/mount -w -v -o remount /
+
+Before this, nothing can write to disk.
+
+
+Mount remaining local filesystems:
+
+    /sbin/mount -a -t nonfs,nosmbfs,nocifs,noproc,nosysfs
+
+
+Seed entropy:
+
+    /usr/sbin/seedrng
+
+Ensures secure randomness early in boot.
+
+At this point, the system is stable enough to continue.
+
+
+/etc/rc.d/rc.M — MULTIUSER INITIALIZATION
+
+rc.M builds the full system.
+
+    echo "Going multiuser..."
+
+
+Set hostname:
+
+    /bin/hostname $(cat /etc/HOSTNAME)
+
+
+Bring up networking:
+
+    /etc/rc.d/rc.inet1
+    /etc/rc.d/rc.inet2
+
+
+Start services (pattern):
+
+    if [ -x /etc/rc.d/rc.crond ]; then
+        /etc/rc.d/rc.crond start
+    fi
+
+This applies to all services: syslog, NTP, SSH, cron, Apache,
+MariaDB, Samba, etc.
+
+Everything is optional and controlled the same way.
+
+
+Custom boot logic:
+
+    if [ -x /etc/rc.d/rc.local ]; then
+        /etc/rc.d/rc.local
+    fi
+
+
+THE EXECUTABLE BIT AS A SERVICE MANAGER
+
+There is no service database. There is only the filesystem.
+
+    Enabled   = executable
+    Disabled  = not executable
+
+
+Examples:
+
+    ls -l /etc/rc.d/
+
+    chmod -x /etc/rc.d/rc.httpd   # disable
+    chmod +x /etc/rc.d/rc.httpd   # enable
+
+A directory listing shows the entire system state.
+
+
+CONCLUSION
+
+Slackware’s init system is not simple because it lacks features.
+It is simple because it solves the problem directly:
+
+    run scripts
+    keep processes alive
+    shut down cleanly
+
+The entire boot process lives in four files:
+
+    /etc/inittab
+    /etc/rc.d/rc.S
+    /etc/rc.d/rc.M
+    /etc/rc.d/rc.local
+
+Read them, and you understand your system.
+
+That kind of transparency has real value—especially when something
+breaks and you need to reason about what is actually happening.
+
+You can just do things.
+
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-03-23 23:49:20 UTC

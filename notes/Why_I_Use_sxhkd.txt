@@ -1,0 +1,106 @@
+WHY I USE SXHKD
+
+
+OVERVIEW
+
+Both pekwm and evilwm provide built-in keybinding support. Despite this,
+I choose to use sxhkd as a separate global hotkey daemon.
+
+This is not because those window managers are lacking features, but
+because I want my keyboard workflow to be independent of the window
+manager itself.
+
+sxhkd provides a small, human-readable layer for expressing keyboard
+intent, while allowing window manager configurations to remain focused
+on window management only.
+
+
+DESIGN GOALS
+
+- keep global keybindings window-manager agnostic
+- preserve muscle memory when switching window managers
+- separate user intent from window management logic
+- use a simple, readable configuration format
+- avoid duplicating keybindings across multiple WM configs
+- follow a Unix-style separation of concerns
+
+
+ASSUMPTIONS
+
+- an X11 environment is in use
+- a lightweight window manager such as pekwm, evilwm, dwm, or bspwm
+- sxhkd is available and running as a user-level daemon
+- global keyboard shortcuts are preferred over WM-specific bindings
+
+
+WHY WINDOW MANAGER KEYBINDINGS ARE NOT ENOUGH
+
+Window manager keybindings are inherently tied to the window manager
+configuration itself. This creates several practical issues:
+
+- switching window managers requires rewriting keybindings
+- global actions (lock screen, launchers, scripts) are mixed with WM logic
+- the same shortcuts are often duplicated across different configs
+- long-term maintenance becomes harder as configurations grow
+
+As a result, the keyboard workflow becomes coupled to the window manager,
+making experimentation and switching unnecessarily expensive.
+
+
+WHY SXHKD
+
+sxhkd provides a dedicated layer for keyboard shortcuts that are not
+intrinsically related to window management.
+
+It allows global actions to live in a single, stable configuration file,
+independent of the window manager in use.
+
+The configuration format is concise and expressive. For example:
+
+    mod1 + {g,f,t}
+        {geany,firefox,st}
+
+This single block expands into multiple related keybindings without
+duplication, making patterns easy to express and maintain.
+
+sxhkd translates human-readable key notation into X11 keysyms internally,
+allowing the user to think in terms of intent rather than implementation
+details.
+
+
+SEPARATION OF CONCERNS
+
+With sxhkd in place:
+
+- window manager configuration focuses on windows, layouts, and rules
+- global user actions live in sxhkd
+- keyboard policy remains stable even if the WM changes
+
+Each tool does one job well, and configurations remain smaller and more
+focused as a result.
+
+
+NOTES
+
+- sxhkd configuration is not a shell script and has its own grammar
+- comments must be placed carefully to avoid breaking bindings
+- keybindings can be reloaded without restarting the window manager
+- the daemon itself remains small and predictable
+
+
+CONCLUSION
+
+Using sxhkd is a deliberate design choice aimed at reducing cognitive
+load and configuration churn.
+
+By keeping keyboard workflow independent from the window manager, it
+becomes easier to experiment, switch tools, and maintain a consistent
+environment over time.
+
+sxhkd is not used because window managers lack keybindings, but because
+it provides a cleaner and more durable place for them.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-16 02:57:24 UTC

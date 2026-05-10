@@ -1,0 +1,143 @@
+SLACKWARE SSD PERFORMANCE TUNING
+
+OVERVIEW
+
+This document describes a minimal and explicit approach to improving SSD
+and NVMe performance on Slackware.
+
+The focus is on reducing write amplification, maintaining consistent
+performance over time, and extending drive lifespan using native Linux
+and Slackware mechanisms. No third-party tools or background services
+are required.
+
+
+DESIGN GOALS
+
+- rely on Slackware-native tools
+- avoid unnecessary daemons
+- keep configuration auditable and simple
+- prioritize long-term SSD health over micro-optimizations
+- ensure predictable system behavior
+
+
+ASSUMPTIONS
+
+- Slackware is running on the system
+- the system uses SSD or NVMe storage
+- filesystems in use support TRIM (e.g. ext4, xfs)
+- the user has root access
+
+
+ABOUT TRIM AND FSTRIM
+
+TRIM allows the operating system to inform an SSD which blocks are no
+longer in use by the filesystem.
+
+This enables the SSD controller to:
+
+- erase unused blocks efficiently
+- reduce write amplification
+- maintain consistent write performance
+- extend the lifespan of the drive
+
+The fstrim utility performs TRIM operations on mounted filesystems.
+Unlike continuous discard mount options, fstrim runs explicitly and in
+a controlled manner.
+
+
+WHY PERIODIC FSTRIM
+
+Running fstrim periodically is preferred over continuous discard
+because:
+
+- it avoids performance penalties during normal I/O
+- it reduces unnecessary write operations
+- it provides predictable execution timing
+- it is easier to audit and control
+
+For most systems, running fstrim weekly or at boot is sufficient.
+
+
+CREATING AN RC.FSTRIM SCRIPT
+
+Slackware does not include a default periodic fstrim mechanism.
+This behavior can be added using a simple rc script.
+
+Create the script:
+
+    vim /etc/rc.d/rc.fstrim
+
+Add the following content:
+
+    #!/bin/sh
+    #
+    # rc.fstrim: Perform filesystem TRIM to maintain SSD/NVMe performance.
+    #
+    if [ -x /sbin/fstrim ]; then
+        echo "Running fstrim on all mounted filesystems..."
+        /sbin/fstrim -av
+    fi
+
+Make the script executable:
+
+    chmod +x /etc/rc.d/rc.fstrim
+
+
+ENABLING FSTRIM AT BOOT
+
+To run fstrim automatically at boot, invoke rc.fstrim from rc.local.
+
+Edit rc.local:
+
+    vim /etc/rc.d/rc.local
+
+Add the following lines before `exit 0`:
+
+    # Run TRIM on SSD/NVMe at boot
+    if [ -x /etc/rc.d/rc.fstrim ]; then
+        /etc/rc.d/rc.fstrim
+    fi
+
+This ensures TRIM is performed regularly without introducing a
+long-running service.
+
+
+VERIFICATION
+
+To verify that fstrim runs correctly, execute the script manually:
+
+    /etc/rc.d/rc.fstrim
+
+The output should list mounted filesystems and the number of bytes
+trimmed.
+
+If no output is shown, confirm that:
+
+- the filesystem supports TRIM
+- the device is an SSD or NVMe drive
+- fstrim is available at /sbin/fstrim
+
+
+NOTES ON FILESYSTEM MOUNT OPTIONS
+
+This document intentionally avoids recommending the `discard` mount
+option.
+
+Continuous discard can increase write amplification and introduce
+latency during normal filesystem operations. Periodic fstrim provides
+better control and more predictable performance.
+
+
+CONCLUSION
+
+Maintaining SSD performance on Slackware does not require complex tools
+or aggressive tuning.
+
+By using periodic fstrim through a simple rc script, SSD and NVMe drives
+remain performant and healthy while preserving Slackware’s philosophy
+of simplicity, transparency, and administrator control.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-03 05:29:48 UTC

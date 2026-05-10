@@ -1,0 +1,194 @@
+KEYD CONFIGURATION ON SLACKWARE
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| keyd provides system-wide keyboard remapping on Slackware.       |
+| It works in TTY, X11, and Wayland without desktop dependencies.  |
+|                                                                  |
+| For a simple USB keyboard (including 3-key devices):             |
+|  - identify the device ID                                        |
+|  - create a file in /etc/keyd/                                   |
+|  - restart keyd                                                  |
+|                                                                  |
+| Changes apply instantly and globally.                            |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+keyd is a low-level keyboard remapping daemon that operates below X11,
+Wayland, and the window manager layer.
+
+Unlike xmodmap, XKB, or window-manager bindings, keyd works directly
+with Linux input devices via evdev. This ensures consistent behavior
+across:
+
+- virtual consoles (TTY)
+- X11 applications
+- Wayland applications
+
+Once configured, the keyboard behaves the same everywhere.
+
+
+QUICK SETUP: REMAP A USB KEYBOARD (FAST PATH)
+
+This section assumes you just plugged in a keyboard and want it working
+immediately.
+
+All configuration steps require root privileges.
+
+
+1. IDENTIFY THE KEYBOARD
+
+Plug in the keyboard and run:
+
+    dmesg | grep -i input
+
+Or list input devices directly:
+
+    ls /dev/input/by-id/
+
+Look for a USB device identifier in VID:PID format (vendor ID and
+product ID), for example:
+
+    514c:8851
+
+If keyd is already installed, you can also list the devices it
+recognizes directly:
+
+    keyd -l
+
+This is often the fastest way to obtain the correct VID:PID without
+wading through kernel logs.
+
+
+2. CREATE A CONFIGURATION FILE
+
+Create a new file in /etc/keyd/. The filename is arbitrary; keyd reads
+all .conf files in this directory and selects the configuration based
+on the [ids] section.
+
+Example file:
+
+    /etc/keyd/3keys.conf
+
+Example configuration for a three-key USB keyboard:
+
+    [ids]
+    514c:8851
+
+    [main]
+    a = backspace
+    b = enter
+    c = enter
+
+
++------------------------------------------------------------------+
+| ERGONOMIC NOTE                                                   |
+|                                                                  |
+| This layout is intentional:                                      |
+|                                                                  |
+| - Enter is duplicated because it is used constantly during       |
+|   text entry and navigation.                                     |
+| - Backspace is placed under a strong finger to reduce movement.  |
+| - No modifiers or layers are involved.                           |
+|                                                                  |
+| The goal is speed and predictability, not flexibility.           |
++------------------------------------------------------------------+
+
+This remaps the keys only on that device.
+Other keyboards are unaffected.
+
+
+3. APPLY THE CONFIGURATION
+
+Restart keyd:
+
+    /etc/rc.d/rc.keyd restart
+
+
+4. VERIFY THE RESULT
+
+Run:
+
+    keyd monitor
+
+Press keys on the keyboard.
+You should see translated key events in real time.
+
+
+HOW KEYD WORKS (MENTAL MODEL)
+
+keyd sits between the physical keyboard and the rest of the system.
+
+    +------------+     +--------+     +--------------+
+    |  Keyboard  | --> | evdev  | --> |     keyd     |
+    +------------+     +--------+     +--------------+
+                                              |
+                                              v
+                                     +------------------+
+                                     | Kernel input API |
+                                     +------------------+
+                                              |
+                         +--------------------+--------------------+
+                         |                    |                    |
+                         v                    v                    v
+                        TTY                 X11 apps           Wayland apps
+
+Applications only see already-remapped keys.
+
+
+REFERENCE IMAGE
+
+Example three-key auxiliary keyboard used in this configuration:
+
+    http://www.slackware.com/~r1w1s1/3keys_keyboard.jpg 
+
+
+SLACKWARE NOTES
+
+keyd does not use systemd on Slackware.
+
+Configuration files are read from /etc/keyd/.
+
+When installed via a SlackBuild or from source, the rc.keyd init script
+is typically provided with the keyd distribution and installed under
+/etc/rc.d/.
+
+To start keyd at boot:
+
+    chmod +x /etc/rc.d/rc.keyd
+
+Add to /etc/rc.d/rc.local:
+
+    if [ -x /etc/rc.d/rc.keyd ]; then
+      /etc/rc.d/rc.keyd start
+    fi
+
+
+ONE FINAL TECHNICAL TIP (OPTIONAL)
+
+If the keyboard does not immediately respond after restarting keyd,
+the uinput kernel module may not be loaded.
+
+On most Slackware kernels this module is already available and loaded
+automatically, but custom or minimal kernels may require it to be
+loaded manually.
+
+Note: Ensure the uinput module is loaded:
+
+    modprobe uinput
+
+
+CONCLUSION
+
+keyd provides simple, predictable, system-wide keyboard remapping.
+
+Once configured, input behavior remains stable across consoles,
+window managers, and applications.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-27

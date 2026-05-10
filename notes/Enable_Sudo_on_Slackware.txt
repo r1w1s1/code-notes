@@ -1,0 +1,109 @@
+ENABLE SUDO ON SLACKWARE
+
+OVERVIEW
+
+Slackware does not enable sudo by default. Administrative access is
+traditionally handled using su and the root account.
+
+This document describes how to enable sudo in a clean and explicit way
+by using the existing wheel group and granting it administrative
+privileges via /etc/sudoers.
+
+This approach follows common Unix practices while preserving
+Slackware's conservative and explicit philosophy.
+
+
+DESIGN GOALS
+
+- keep privilege escalation explicit
+- avoid modifying default Slackware behavior unnecessarily
+- use group-based access control
+- ensure configuration remains auditable
+- prevent accidental lockouts
+
+
+ASSUMPTIONS
+
+- Slackware is running on the system
+- sudo is installed
+- the user has root access
+- the system administrator understands the risks of sudo access
+
+
+CONFIGURING SUDOERS
+
+Always edit the sudoers file using a safe editor to avoid syntax errors:
+
+    visudo
+
+Alternatively, if visudo is not configured:
+
+    vim /etc/sudoers
+
+Add ONE of the following lines, depending on the desired behavior.
+
+
+PASSWORDLESS SUDO
+
+Members of the wheel group can execute commands as root without entering
+a password:
+
+    %wheel ALL=(ALL:ALL) NOPASSWD: ALL
+
+
+PASSWORD-PROTECTED SUDO (RECOMMENDED)
+
+Members of the wheel group must enter their own password:
+
+    %wheel ALL=(ALL:ALL) ALL
+
+Save the file and exit the editor.
+
+
+ADDING USERS TO THE WHEEL GROUP
+
+Replace `yourusername` with the actual username and run as root:
+
+    usermod -aG wheel yourusername
+
+This appends the user to the wheel group without removing existing group
+memberships.
+
+
+VERIFYING SUDO ACCESS
+
+Log out and log back in to apply group changes.
+
+Verify sudo functionality:
+
+    sudo whoami
+
+If the output is:
+
+    root
+
+sudo is working correctly.
+
+
+NOTES AND CONSIDERATIONS
+
+- Slackware does not require sudo; su remains fully supported
+- passwordless sudo reduces friction but increases risk
+- limit sudo access to trusted users only
+- always test sudo configuration before closing the root session
+- syntax errors in sudoers can lock out administrative access
+
+
+CONCLUSION
+
+Enabling sudo on Slackware is a deliberate administrative choice, not a
+default requirement.
+
+By using the wheel group and explicit sudoers configuration,
+administrators can balance convenience and security while preserving
+Slackware's emphasis on transparency and control.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-03-27 00:00:00 UTC

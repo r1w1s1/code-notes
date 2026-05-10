@@ -1,0 +1,304 @@
+USING NVI AS A MINIMAL AND FAST TEXT EDITOR
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| nvi is a fast, lightweight vi implementation designed for large  |
+| files, low memory usage, and predictable behavior. It is ideal   |
+| for servers, SSH sessions, and minimal Unix environments where   |
+| vim is unnecessary or too heavy.                                 |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+This document introduces the nvi text editor, a clean and efficient
+implementation of the original Berkeley vi written by Keith Bostic.
+nvi is designed for speed, low memory usage, and predictable behavior.
+
+It is especially suited for system administration, SSH sessions,
+editing configuration files, and handling very large text files such
+as logs or JSON dumps on Unix-like systems, including Slackware.
+
+Unlike modern editors, nvi avoids complexity (plugins, scripting,
+syntax highlighting) and focuses on reliability, efficiency, and
+faithful classic vi behavior.
+
+
+WHY USE NVI?
+
+nvi provides the traditional vi experience with several practical
+advantages:
+
+    - extremely low memory usage
+    - fast access to distant lines
+    - excellent performance with very large files
+    - simple configuration and predictable commands
+    - small and maintainable codebase
+    - strong alignment with the Unix philosophy
+    - reliable behavior inside terminal multiplexers (tmux, mtm, screen)
+
+These characteristics make nvi ideal for minimal environments and
+users who prefer a distraction-free workflow.
+
+
+INTERNAL ARCHITECTURE
+
+nvi differs from many other editors in how it stores and accesses
+text internally.
+
+Instead of loading the entire file into memory as a simple array
+of lines, nvi uses a database-backed storage model designed for
+efficient random access.
+
+In nvi 1.81.x, this storage is implemented using Berkeley DB
+(version 3.x or newer), as described in README.DB3.
+
+Key points of this design:
+
+    * Database-backed buffer storage:
+      Each line of the file is stored as a numbered record inside
+      an internal Berkeley DB database. This allows efficient access
+      to line N without scanning the file sequentially.
+
+    * Record-oriented access:
+      Line-based operations map naturally to record-number access,
+      enabling fast jumps, searches, and edits even in files with
+      millions of lines.
+
+    * Memory efficiency:
+      Berkeley DB manages paging internally. Only the necessary
+      portions of the file are kept in memory, avoiding large RAM
+      usage when working with huge files.
+
+    * Internal use only:
+      The database is not exposed to users and is not used as a
+      general-purpose database. Edited files are not stored as
+      persistent .db files.
+
+    * External dependency:
+      Unlike older historical versions, nvi 1.81.x does not embed
+      its own Berkeley DB source code. Instead, it links against an
+      external Berkeley DB library (DB 3.x or newer), either
+      statically or dynamically depending on how it is built.
+
+This architecture explains nvi's ability to handle extremely large
+files smoothly while remaining lightweight.
+
+
+CRASH RECOVERY
+
+Crash recovery in nvi is handled separately from the main buffer
+storage.
+
+If an editing session is interrupted, recovery metadata is stored
+in:
+
+    /var/tmp/vi.recover/
+
+Files named:
+
+    recover.<id>
+    vi.<id>
+
+allow interrupted sessions to be restored using:
+
+    nvi -r
+
+These recovery files are independent of the Berkeley DB storage
+used for normal editing.
+
+
+MINIMAL CONFIGURATION (.EXRC)
+
+nvi uses a simple configuration file named ".exrc". A minimal setup
+might be:
+
+    set showmode
+    set showmatch
+    set ruler
+    set shiftwidth=2
+    set tabstop=2
+
+No plugins, runtime directories, or external tools are required.
+
+
+WORKING WITHOUT SYNTAX HIGHLIGHTING
+
+nvi does not include syntax highlighting. This design choice promotes:
+
+    - reduced visual noise
+    - clearer focus on text structure
+    - consistent display across terminals
+    - reliable behavior in minimal environments
+
+For scripting, configuration files, logs, and remote administration,
+syntax highlighting is optional rather than necessary.
+
+
+UTF-8 AND ENCODING
+
+nvi handles UTF-8 correctly for well-formed files. When loading
+files with broken or non-UTF-8 encodings, it may silently truncate
+content at the point of invalid bytes.
+
+This is worth knowing, but it is not a concern for the primary use
+cases this document covers: SlackBuilds, C source, YAML, JSON, log
+files, and configuration files in /etc. These are reliably
+well-formed UTF-8 in modern Unix environments.
+
+For files with unknown or potentially broken encodings, verify the
+encoding first (file(1), iconv(1)) before editing.
+
+
+UNDO, MARKS, AND WINDOW SPLITS
+
+Undo and redo:
+
+    u     undo last change
+    .     repeat undo
+    uu    redo
+
+Marks allow precise navigation:
+
+    mx    set mark x
+    'x    jump to line of mark x
+    `x    jump to exact cursor position
+
+Window splits:
+
+    :vs   vertical split
+    :E    horizontal split
+
+
+RECOMMENDED USAGE WITH TMUX
+
+Since nvi does not implement tabs, tmux is an ideal companion:
+
+    - multiple panes
+    - persistent sessions
+    - fullscreen focus
+    - fast switching between tasks
+
+This keeps the editor itself minimal while still supporting
+multi-file workflows.
+
+nvi uses curses for terminal I/O, which means it behaves correctly
+and reliably inside terminal multiplexers such as tmux, mtm, and
+GNU Screen. This is in contrast to editors that write escape
+sequences directly to the terminal, bypassing curses, which can
+cause display issues in multiplexed environments.
+
+Historically, screen-oriented Unix software such as vi depended on
+terminal capability systems like termcap (and later terminfo) to
+support many different terminal types efficiently and portably.
+
+Modern terminal applications still inherit many concepts from this
+design.
+
+
+NVI ON SLACKWARE
+
+nvi was added to Slackware -current on:
+
+    Mon Jan 13 00:11:55 UTC 2020
+
+This was its first appearance in the distribution, and it later
+became part of the Slackware 15.0 stable release (February 2022).
+Slackware 14.2 and earlier shipped with Elvis as /usr/bin/vi.
+
+When nvi was introduced, Elvis was rebuilt to remove its /usr/bin/vi
+and /usr/bin/ex symlinks. From that point onward, nvi provides those
+symlinks only if they are not already supplied by another editor.
+
+This preserves Slackware's long-standing policy of allowing users
+to choose their preferred vi implementation.
+
+Reasons for adopting nvi:
+
+    - proper UTF-8 support
+    - predictable behavior in modern terminals
+    - smaller and more maintainable codebase
+    - strong alignment with Slackware's traditional design
+
+Slackware applies maintenance patches to nvi addressing:
+
+    - UTF-8 and wide-character handling
+    - build system portability
+    - stability and bug fixes
+    - long-term maintainability
+
+These patches modernize nvi without altering its classic vi behavior.
+
+Users may change the default vi/ex implementation using:
+
+    pkgtool -> Setup -> vi-ex
+
+
+ESSENTIAL COMMANDS
+
+A concise nvi quick reference is available at:
+
+    http://www.slackware.com/~r1w1s1/nvi.html
+
+
+WHEN NVI IS A GOOD CHOICE
+
+nvi is ideal for:
+
+    - servers and SSH environments
+    - editing configuration files in /etc
+    - minimal or low-resource systems
+    - large log files or JSON datasets
+    - users who prefer classic vi behavior
+    - workflows requiring speed and simplicity
+    - terminal multiplexer environments (tmux, mtm, GNU Screen)
+
+
+CONCLUSION
+
+nvi follows the original Unix philosophy: simple, fast, and reliable.
+
+Its database-backed internal storage enables excellent performance
+with large files, while its minimal design keeps editing predictable
+and distraction-free.
+
+For Slackware and other Unix users seeking a lightweight, efficient
+editor, nvi remains an outstanding choice.
+
+
+APPENDIX: MINIMAL COMPARISON (NVI VS VIM VS ELVIS)
+
+nvi:
+    - fastest and lightest
+    - excellent for very large files
+    - classic vi behavior
+    - ideal for servers and SSH
+    - reliable in terminal multiplexers (uses curses)
+    - no plugins, no scripting, no extras
+
+vim:
+    - feature-rich and extensible
+    - best for IDE-like workflows
+    - syntax highlighting, scripting, LSP
+    - heavier and slower with huge files
+
+elvis:
+    - small and portable vi clone
+    - unique display modes
+    - suitable for rescue systems
+    - limited UTF-8 support
+
+
+UPSTREAM AND HISTORICAL REFERENCES
+
+nvi originates from the Berkeley vi developed by Keith Bostic.
+Historical documentation and background can be found at:
+
+    https://sites.google.com/a/bostic.com/keithbostic/the-berkeley-vi-editor-home-page
+
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-05-08 00:00:00 UTC

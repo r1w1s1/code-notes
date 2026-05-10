@@ -1,0 +1,183 @@
+REVISITING ST AFTER THE 2018 LWN TERMINAL EMULATOR ANALYSIS
+
+OVERVIEW
+
+In 2018, LWN published a two-part series titled “A look at terminal
+emulators”, evaluating features and performance of several terminal
+emulators, including st.
+
+The articles tested st 0.6/0.7 (as shipped by Debian and Fedora at the
+time) and st 0.8.1 upstream.
+
+This note revisits those observations by examining the upstream st git
+history from 2018 through 2025, focusing on how the issues discussed in
+the articles were addressed over time.
+
+
+ORIGINAL ARTICLES
+
+Part 1 (features):
+https://lwn.net/Articles/749992/
+
+Part 2 (performance):
+https://lwn.net/Articles/751763/
+
+
+SUMMARY OF ISSUES DISCUSSED IN 2018
+
+The LWN articles highlighted (explicitly or implicitly) several areas of
+concern:
+
+- unicode and wide-glyph correctness
+- input handling and crash scenarios
+- paste behavior and tmux integration
+- redraw and latency behavior
+- escape sequence and color handling
+
+
+UPSTREAM CHANGES SINCE 2018
+
+Reviewing the st git log from 2018 onward shows sustained maintenance across these areas.
+No single commit “fixed everything”; instead, issues were handled incrementally over several years.
+
+
+KEY UPSTREAM FIXES SINCE 2018 (HIGH-LEVEL)
+
+Before diving into details, a small set of upstream commits stands out as
+particularly important. These address crash-class bugs and unsafe input
+handling that relate directly to stability concerns raised in the 2018
+analysis.
+
+These fixes significantly improved baseline robustness:
+
+- Fix buffer overflow when handling long composed input:
+  https://git.suckless.org/st/commit/e5e959835b195c023d1f685ef4dbbcfc3b5120b2.html
+
+- Fix null pointer access in input handling:
+  https://git.suckless.org/st/commit/a0467c802d4f86ed162486e3453dd61181423902.html
+
+- Fix rare crash in Xutf8TextPropertyToTextList:
+  https://git.suckless.org/st/commit/2f6e597ed871cff91c627850d03152cae5f45779.html
+
+- Fix unexpected closure of standard streams:
+  https://git.suckless.org/st/commit/1d3142da968da7f6f61f1c1708f39ca233eda150.html
+
+The sections below group additional fixes according to the themes
+covered in the original LWN articles.
+
+
+RELATED TO PART 1 (FEATURES)
+
+UNICODE AND WIDE-GLYPH CORRECTNESS
+
+Unicode handling and wide-character rendering were a major topic in the
+2018 feature analysis. Multiple upstream commits addressed correctness
+issues in this area:
+
+- Fix wide glyphs breaking nowrap mode:
+  https://git.suckless.org/st/commit/8abe4bcb41aa7fda0ae00823f6a20271124150db.html
+
+- Fix cursor movement with wide glyphs:
+  https://git.suckless.org/st/commit/7473a8d1a57e5f9aba41b953f4e498c35e1c9dc5.html
+
+- Fix overtyping wide characters:
+  https://git.suckless.org/st/commit/65f1dc428315ae9d7f362e10c668557c1379e7af.html
+
+- Fix wide characters incorrectly cleared in MODE_INSERT:
+  https://git.suckless.org/st/commit/3a6d6d740110e6ee1b092d05ad746244eedabe4b.html
+
+- Ignore C1 control characters in UTF-8 mode:
+  https://git.suckless.org/st/commit/211964d56ee00a7d46e251cbc150afb79138ae37.html
+
+- Fix Unicode glitches in DCS strings:
+  https://git.suckless.org/st/commit/818ec746f4caae453d09368b101c3e841cf39870.html
+
+
+PASTE BEHAVIOR AND TMUX INTEGRATION
+
+Paste handling and tmux interaction were explicitly discussed in Part 1
+of the LWN series. Relevant upstream improvements include:
+
+- Add terminfo entries for bracketed paste mode:
+  https://git.suckless.org/st/commit/9846a56bd7fdc86bf788db04bbbcbde7b7eb9952.html
+
+- Fix tmux terminfo extensions (Se/Ss):
+  https://git.suckless.org/st/commit/83866428de031300eab03fbb116bcf7d2b1d4f60.html
+
+- Unhide cursor on terminal reset (RIS):
+  https://git.suckless.org/st/commit/559fdc278681c98470749adb59f01cd071720458.html
+
+
+RELATED TO PART 2 (PERFORMANCE)
+
+LATENCY AND REDRAW BEHAVIOR
+
+Performance, redraw behavior, and visual smoothness were central topics
+in Part 2 of the LWN analysis. Subsequent upstream changes include:
+
+- Improve latency in the default configuration:
+  https://git.suckless.org/st/commit/f20e169a20f3ee761f7e09714f1d4c10916cf4c6.html
+
+- Draw on idle to reduce flicker and tearing:
+  https://git.suckless.org/st/commit/1d590910652519268152eae6b97cf30ace4e90c0.html
+
+- Delay redraws during palette changes:
+  https://git.suckless.org/st/commit/e823e2308f2a99023032a3966ebb7036a31d305f.html
+
+
+MODERN ESCAPE SEQUENCES AND COLOR HANDLING
+
+Support for newer escape sequences and color handling evolved
+significantly after 2018, addressing gaps noted in both articles:
+
+- Support colon-separated SGR attributes:
+  https://git.suckless.org/st/commit/5dbcca49263be094fc38159c297458ae323ef647.html
+
+- Proper handling of CSI 58 sequences:
+  https://git.suckless.org/st/commit/f114bcedd113017d907aad32031db92c050f4bf3.html
+
+- Avoid misinterpreting CSI ? u as DECRC:
+  https://git.suckless.org/st/commit/98610fcd37f655d44586323dc86c1d013c2798ce.html
+
+- Support OSC 110/111/112 color reset sequences:
+  https://git.suckless.org/st/commit/d6c431859c6c0201e0668ed24a9f17cebf0a68f5.html
+
+
+DEFENSIVE BOUNDS AND CORRECTNESS FIXES
+
+Less visible but important robustness improvements include:
+
+- Fix bounds checks of dc.col:
+  https://git.suckless.org/st/commit/a6bbc0c96b0a1db804061b0db79101c6b26aec57.html
+
+- Set upper limit for REP escape sequence arguments:
+  https://git.suckless.org/st/commit/95f22c53059ccd60ee701ccf2659dacd95e4e89a.html
+
+- Avoid potential undefined behavior in isprint():
+  https://git.suckless.org/st/commit/af3bb68add1c40d19d0dee382009e21b0870a38f.html
+
+
+CURRENT USAGE
+
+As of 2025, I use st 0.9.3 daily with tmux on Slackware.
+
+This corresponds to a substantially different codebase than the versions evaluated in 2018.
+
+In this setup, st has been stable, predictable, and free of the issues
+described in the original 2018 analysis.
+
+
+CONCLUSION
+
+The 2018 LWN articles remain a valuable snapshot of their time.
+
+However, reviewing the upstream st history shows that many of the issues
+observed then were addressed incrementally over subsequent years.
+
+This note does not claim that st is perfect or uniquely correct, but
+documents how the project evolved relative to that analysis.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-03 06:01:53 UTC

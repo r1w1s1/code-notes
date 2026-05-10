@@ -1,0 +1,66 @@
+CODE-NOTES
+
+code-notes is a small collection of concise technical notes.
+
+The notes primarily cover Slackware Linux, Unix system administration,
+package mirrors, QEMU, editors, and simple tools.
+
+All documents are written in plain text.
+
+
+DOCUMENTS
+
+NOTE: The list below is generated from the notes/ directory.
+
+The following notes are available under notes/:
+
+NVI EDITOR
+  - Using_NVI_in_2026.txt
+  - NVI_Editor_Guide.txt
+  - Why_NVI_Exists.txt
+  - Stop_Opening_Huge_Files_in_Screen_Editors.txt
+  - Exploring_Heirloom_ex_vi.txt
+  - bill-joy-interview-1984.txt
+
+EDITORS AND TOOLS
+  - Install_Vim_Plug.txt
+  - My_GNU_Screen_Setup.txt
+  - My_MTM_Setup.txt
+  - Revisiting_ST_after_LWN_2018.txt
+  - Why_I_Use_sxhkd.txt
+  - Understanding_Wayland_X11_and_Minimalism.txt
+
+SLACKWARE SETUP AND CONFIGURATION
+  - Git_Bash_Completion_on_Slackware.txt
+  - Enable_Landlock_on_Slackware.txt
+  - Enable_Sudo_on_Slackware.txt
+  - Install_Google_Chrome_Slackware.txt
+  - Installing_Firefox_Nightly.txt
+  - Slackware_Cowsay.txt
+  - Slackware_Keyd_Configuration.txt
+  - Slackware_NTP_Configuration.txt
+  - Slackware_SSD_Performance_Tuning.txt
+  - Slackware_UFW_Firewall.txt
+  - Understanding_Bash_Profile_and_Bashrc.txt
+  - Understanding_Slackware_Philosophy.txt
+
+SLACKWARE BOOT AND KERNEL
+  - GRUB_Slackware.txt
+  - GRUB_Slackware_Guide.txt
+  - Slackware_Init_Boot_Process.txt
+  - Slackware_Kernel_Build_Guide.txt
+
+SLACKWARE MIRRORS
+  - Git_Mirror_Tips.txt
+  - Slackware_Local_Mirror_Setup.txt
+  - Slackware_Mirror_Serving_Guide.txt
+
+CONTAINERS AND VIRTUALIZATION
+  - Slackware_LXC_Guide.txt
+  - Slackware_Nerdctl_Containerd_Guide.txt
+  - Slackware_QEMU_Guide.txt
+
+SECURITY AND GPG
+  - Password_Store_with_Git_Guide.txt
+  - Slackware_GPG_Key_Backup_and_Restore.txt
+  - Using_Password_Store_as_an_Address_Book_for_mutt.txt

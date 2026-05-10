@@ -1,0 +1,242 @@
+The following interview is taken from the August 1984 issue of
+Unix Review magazine (which briefly changed its name to
+Performance Computing, but then dropped out of print and later
+went to an online-only format at www.unixreview.com).
+
+The original unixreview.com site no longer exists.
+
+This plain text version was converted from a scanned archival PDF
+for personal study, historical preservation, and reference.
+
+Original interview:
+    "Interview with Bill Joy"
+    By Jim Joyce
+    Unix Review Magazine
+    August 1984
+
+Preserved in plain text format to remain accessible with standard
+Unix tools and simple text viewers.
+
+
+Interview with Bill Joy
+By Jim Joyce
+
+
+Bill Joy is one of those rare people who can carry on a rapid-fire
+technical conversation while coding at the keyboard. His seemingly
+inexhaustible energy has produced the C shell command interpreter,
+the vi screen editor and the Berkeley paging kernel, among other
+accomplishments. UNIX REVIEW sent Jim Joyce to Sun Microsystems,
+where Joy is Vice President in charge of Research and Development,
+to capture some of this energy.
+
+
+REVIEW: How did vi come about?
+
+JOY: It's an interesting story. I came to Berkeley in '75 as a
+theory student and got involved with Mike Harrison working on
+general context-free parsing algorithms, so I tried to write the
+thing in Pascal because Pascal had sets, which Ken Thompson had
+permitted to be of arbitrary length.
+
+The program worked, but it was almost 200 lines long - almost too
+big for the Pascal system.
+
+I talked to Thompson to figure out how I could make the Pascal
+system handle this program. Chuck Haley and I got involved in
+trying to make the Pascal system handle it, but the thing was wrong
+because it was building the entire thing in core.
+
+So I got sucked in, got department help, and built some hope of
+receiving enough support eventually to pay for this program to work
+under Pascal.
+
+But while we were doing that, we were sort of hacking around on ed
+just to add things. Chuck came in late one night and put in open
+mode - where you can move the cursor on the bottom line of the CRT.
+
+Then George Coulouris from Queen Mary College came to Berkeley and
+brought along this thing called em, which stood for "editor for
+mortals."
+
+It had two error messages instead of one. It had a prompt, and its
+own strange version of open modes done for ITT terminals, which
+really didn't work very well on ADM-3As.
+
+So Chuck and I looked at that and we hacked on em for a while, and
+eventually we ripped the stuff out of em and put some of it into
+what was then called en, which was really ed with some em features.
+
+Chuck would come in at night - we really didn't work exactly the
+same hours although we overlapped in the afternoon. I'd break the
+editor and he'd fix it and then he'd break it and I'd fix it.
+
+I got really big into writing manual pages, so I wrote manual pages
+for all the great features we were going to do but never
+implemented.
+
+Eventually Chuck graduated with his Ph.D. for his part of the
+Pascal system. After he left, there was ex Version 0.1 at the
+Computer Center.
+
+There was a version of the editor from EP016, which stood for
+September 1, '76, the date that the binary was created - after
+which we promptly lost the source because we were making so many
+changes and didn't have SCCS.
+
+Really, what started it all was that we got some ADM-3As to do
+screen editing.
+
+I remember right after Carter got elected, I was sitting in my
+apartment in Albany, CA, on a Saturday listening to people call
+Carter and ask stupid questions while I designed the screen editor.
+
+That dates it: it was probably '76.
+
+It was really a consequence of our initial frustration with Pascal.
+It went on from there.
+
+I stopped working on it whenever they made the reference cards -
+'78 - '79 - and I really haven't worked on it for five years.
+
+
+REVIEW: What would you do differently?
+
+JOY: I wish we hadn't used all the keys on the keyboard.
+
+I think one of the interesting things is that vi is really a
+mode-based editor.
+
+I think as mode-based editors go, it is pretty good.
+
+One of the good things about EMACS, though, is its programmability
+and the modelessness. Those are two ideas which never occurred to
+me.
+
+I also wasn't very good at optimizing code when I wrote vi.
+
+I think the redisplay module of the editor is almost intractable.
+
+It does a really good job for what it does, but when you're writing
+programs as you're learning... That's why I stopped working on it.
+
+The fundamental problem with vi is that it doesn't have a mouse and
+therefore you've got all these commands.
+
+In some sense, it's backwards from the kind of thing you'd get from
+a mouse-oriented thing.
+
+I think multiple levels of undo would be wonderful, too.
+
+But fundamentally, vi is still ed inside. You can't really fool it.
+
+It's like one of those pinatas - things that have candy inside but
+has layer after layer of paper mache on top.
+
+It doesn't really have a unified concept.
+
+I think if I were going to go back - I wouldn't go back, but start
+over again.
+
+
+REVIEW: You had said, when you were giving a demonstration earlier
+today, that when you are on foreign systems you use ed.
+
+JOY: That's right. Absolutely.
+
+
+REVIEW: You don't even try to use vi?
+
+JOY: I'm used to having a 24-line terminal with no ability to
+scroll back.
+
+The reason I use ed is that I don't want to lose what's on the
+screen.
+
+I used to have a Concept terminal which had eight pages of memory,
+like a mini-version of a window system.
+
+I just don't like to lose what's in the window.
+
+
+REVIEW: Real programmers use cat as their editor.
+
+JOY: That's right! There you go!
+
+It is too much trouble to say ed, because cat's smaller and only
+needs two pages of memory - plus you're not likely to get swapped
+out.
+
+That's why ed didn't prompt, you know. The performance of the
+system was just horrible.
+
+It would swap things out randomly and do all sorts of things.
+
+In ed you might type "a", but have no idea how far behind the
+system was.
+
+And it didn't matter, as long as it didn't get more than a few
+hundred characters behind and start throwing lines away without
+telling you.
+
+
+REVIEW: What are your views on make and SCCS?
+
+JOY: I think make is the program that causes people to write the
+things down that formerly were scribbled on the wall.
+
+It's sort of the graffiti recorder.
+
+That's the wonderful thing about it.
+
+People don't use SCCS and make enough.
+
+
+REVIEW: What about the future of interfaces?
+
+JOY: I think the Macintosh proves that everyone can have a bitmapped
+display.
+
+The fundamental tension in UNIX that I think AT&T doesn't
+understand is that everyone is going to have a bitmap.
+
+With a mouse to point with, you've got sort of a baseline of
+facilities around which you can build a document environment.
+
+I think you also need a full-page display.
+
+The neat thing about UNIX is that it is very responsive.
+
+You just say, "A pipe to B" - it doesn't blather at you that
+"execution begins."
+
+The trouble is that UNIX is not accessible, not transparent in the
+way that graphical systems are.
+
+Systems are going to get a lot more sophisticated.
+
+Things will tend to get lost unless the interfaces are done in the
+Macintosh style.
+
+
+REVIEW: What about portable systems?
+
+JOY: You don't really want to have a telephone in the office or be
+tied to an office.
+
+You'd like to have the office with you and the phone with you.
+
+I want to be able to turn the phone off, thank you.
+
+I think that's going to require very different technology.
+
+
+REVIEW: Like designer jeans?
+
+JOY: I don't buy designer jeans - well, what I'm wearing aren't bad
+jeans. They're my burlap sacks.
+
+Wrinkles are in, you know.
+
+
+END OF INTERVIEW

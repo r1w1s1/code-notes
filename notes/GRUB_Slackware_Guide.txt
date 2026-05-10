@@ -1,0 +1,118 @@
+Using GRUB on Slackware-current (also applicable to Slackware 15.0)
+
+This guide applies to Slackware-current systems while LILO is still the
+default installer bootloader. GRUB setup remains an explicit, manual
+administrative choice.
+
+
+UEFI - Installation Instructions
+
+Do not install LILO or ELILO. Instead, configure GRUB as follows:
+
+1. Enter the chroot environment:
+
+   chroot /mnt
+   source /etc/profile
+
+2. Install GRUB:
+
+   grub-install
+
+3. Create the necessary directory for the bootloader:
+
+   mkdir -p /boot/efi/EFI/BOOT
+
+4. Copy the GRUB EFI file to the default boot location:
+
+   cp /boot/efi/EFI/slackware-15+/grubx64.efi /boot/efi/EFI/BOOT/Bootx64.efi
+
+5. Generate an initial ramdisk:
+
+   geninitrd
+
+Note:
+After installing or upgrading the GRUB package, check for
+/etc/default/grub.new and merge it before running update-grub.
+
+6. Update the GRUB configuration:
+
+   update-grub
+
+7. Install GRUB in removable mode (optional but recommended for fallback):
+
+   grub-install --removable
+
+
+Post-Kernel Update:
+
+After updating the kernel, ensure you run:
+
+   update-grub
+
+Note:
+On Slackware-current (15.0+), update-grub is run automatically after a
+kernel upgrade.
+
+
+------------------------------------------------------------------
+
+Legacy BIOS - Installation Instructions
+
+Do not install LILO or ELILO. Instead, configure GRUB as follows:
+
+1. Enter the chroot environment:
+
+   chroot /mnt
+   source /etc/profile
+
+2. Install GRUB to the Master Boot Record (MBR):
+
+   grub-install --target=i386-pc /dev/sdX
+
+   Replace /dev/sdX with the appropriate disk (e.g., /dev/sda).
+   Do not specify a partition (e.g., /dev/sda1).
+
+3. Generate an initial ramdisk:
+
+   geninitrd
+
+Note:
+After installing or upgrading the GRUB package, check for
+/etc/default/grub.new and merge it before running update-grub.
+
+4. Update the GRUB configuration:
+
+   update-grub
+
+Note:
+On Slackware-current (15.0+), update-grub is run automatically after a
+kernel upgrade.
+
+
+------------------------------------------------------------------
+
+Notes on Slackware-current
+
+Recent Slackware-current versions include a GRUB_INSTALL_SCRIPT variable
+in /etc/default/grub intended for future automation of grub-install and
+update-grub during package upgrades.
+
+At the moment, this script does not exist yet, so the GRUB bootloader
+must still be reinstalled manually for major GRUB updates.
+
+Note for Slackware 15.0
+
+Slackware 15.0 does not include the geninitrd helper script. Users must
+generate the initrd manually using mkinitrd.
+
+Example:
+
+   mkinitrd -c -k $(uname -r) -f ext4 -r /dev/sdXn
+
+   Replace /dev/sdXn with your root partition.
+
+------------------------------------------------------------------
+
+This guide covers both UEFI and Legacy BIOS setups for configuring GRUB
+on Slackware-current (15.0+). Ensure you follow the correct instructions
+based on your system firmware.

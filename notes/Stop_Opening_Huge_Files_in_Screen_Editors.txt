@@ -1,0 +1,144 @@
+STOP OPENING HUGE FILES IN SCREEN EDITORS
+
+OVERVIEW
+
+Screen editors such as nvi and vim are designed for interactive,
+cursor-based editing of reasonably sized text files.
+
+When file sizes grow to hundreds of megabytes or gigabytes, these
+assumptions no longer hold. Startup time, navigation cost, memory
+usage, and terminal redraw become dominant, often making screen
+editors the wrong tool for the task.
+
+This note explains why large files behave poorly in screen editors
+and describes a more appropriate Unix-style workflow.
+
+
+REFERENCE DISCUSSION
+
+https://phanpy.social/#/hachyderm.io/s/115891592999188880
+
+
+DESIGN GOALS
+
+- avoid unnecessary screen-editor overhead
+- preserve predictable performance on large files
+- rely on standard Unix text-processing tools
+- use screen editors only when their interaction model is required
+
+
+BACKGROUND
+
+Screen editors assume that users want to:
+
+- scroll through text
+- see surrounding context
+- move a cursor interactively
+- edit incrementally
+
+These assumptions do not scale well as file size increases.
+
+At large sizes, most of the cost comes not from disk I/O, but from
+building internal data structures, maintaining screen state, and
+handling cursor movement and redraw.
+
+Large files also increase memory pressure, which can further degrade
+performance or cause swapping on constrained systems.
+
+
+EDITOR BEHAVIOR AT SCALE
+
+Line editors such as ed use a simpler internal model and avoid
+maintaining a full screen state. Their startup cost is largely
+I/O-bound.
+
+Screen editors must prepare additional state:
+
+- line offset tables
+- navigation structures
+- undo and history data
+- screen and cursor invariants
+
+Some editors perform this work eagerly (nvi), others defer it (vim),
+but the cost cannot be eliminated — only shifted.
+
+
+OBSERVATION (1GB TEXT FILE)
+
+Measured startup times on a ~1GB text file (~25M lines):
+
+    nvi  -> ~20s   (eager line indexing)
+    vim  -> ~8s    (lazy loading, deferred UI cost)
+    ed   -> ~4s    (linear read into buffer, no screen state)
+
+Numbers are illustrative. Hardware, storage, and configuration
+affect results significantly.
+
+
+RECOMMENDED WORKFLOW
+
+For very large files, prefer tool composition over a single editor.
+
+Inspection:
+    head, tail, wc, grep
+
+Structure analysis:
+    grep -n, awk, sed -n
+
+Extraction:
+    cut, sort, uniq
+
+Chunk processing:
+    split, parallel
+
+Known or mechanical changes:
+    ed, sed, awk
+
+Example:
+
+    grep -n "ERROR" large.log | less
+
+Screen editors should be used only when interactive rewriting or
+human-driven refactoring is required.
+
+
+RULE OF THUMB
+
+- If the file does not fit comfortably in memory, avoid screen editors
+- If you are searching or filtering, use grep/sed/awk
+- If you are transforming data, use stream tools
+- Use a screen editor only when human interaction is required
+
+
+ON NVI
+
+nvi prioritizes correctness and predictability over perceived speed.
+
+It performs eager preparation to preserve classic vi semantics such
+as precise line addressing and deterministic navigation. The
+resulting startup cost on large files is not a flaw, but a direct
+consequence of that design choice.
+
+The use of a database backend (historically libdb) for the edit
+buffer reinforces this: it gives nvi durable, well-defined behavior
+at the cost of imposing the backend's own size limits.
+
+LIMITATIONS
+
+This workflow favors determinism and performance over convenience.
+
+Users who need continuous visual context or exploratory editing may
+still choose a screen editor, accepting the associated cost.
+
+
+CONCLUSION
+
+Large files do not require faster editors; they require different tools.
+
+Unix addresses this problem by combining small, focused programs
+rather than extending a single abstraction beyond its useful limits.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-04-06

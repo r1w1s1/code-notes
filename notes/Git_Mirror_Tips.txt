@@ -1,0 +1,139 @@
+GIT MIRROR TIPS AND MULTI-REPOSITORY CONFIGURATION
+
+OVERVIEW
+
+This document describes practical techniques for working with multiple
+Git repositories, managing different identities, and maintaining mirror
+backups across hosting providers.
+
+The focus is on keeping workflows simple, explicit, and easy to audit,
+using standard Git features without external tooling.
+
+
+DESIGN GOALS
+
+- support multiple Git hosting providers
+- keep identity configuration explicit
+- avoid repository-specific hacks
+- make mirroring predictable and repeatable
+- simplify common push workflows
+
+
+ASSUMPTIONS
+
+- Git is installed and configured
+- the user works with multiple remotes or hosting providers
+- repositories may require different identities
+- the user is comfortable editing configuration files
+
+
+USING MULTIPLE GITCONFIG FILES
+
+Git allows conditional inclusion of configuration files based on
+repository properties. This can be used to apply different identities
+or settings depending on the remote URL.
+
+Example global ~/.gitconfig:
+
+    [user]
+        name = user
+        email = user@fastmail.com
+
+    [init]
+        defaultBranch = main
+
+    [includeIf "hasconfig:remote.origin.url =~ ^https://git.codeberg.org"]
+        path = ~/.gitconfig.codeberg
+
+    [includeIf "hasconfig:remote.origin.url =~ ^https://github.com"]
+        path = ~/.gitconfig.github
+
+    [core]
+        editor = vim
+
+Example ~/.gitconfig.codeberg:
+
+    [user]
+        name = anotheruser
+        email = anotheruser@gmail.com
+
+    [init]
+        defaultBranch = main
+
+    [core]
+        editor = vim
+
+
+NOTES ON EDITOR CONFIGURATION
+
+In the examples above, `editor = vim` is used for maximum portability,
+as Vim is commonly available across systems.
+
+In practice, the editor setting can be adjusted freely. For example,
+users who prefer nvi may use:
+
+    [core]
+        editor = nvi
+
+Git simply invokes the configured editor and does not depend on any
+Vim-specific behavior.
+
+
+ADDING A BACKUP REMOTE
+
+To keep a mirror of a repository on another hosting provider, add an
+additional remote.
+
+Example: adding Codeberg as a backup for a SourceHut repository:
+
+    git remote add codeberg <codeberg-repository-url>
+
+
+PUSHING A MIRROR
+
+To push a full mirror of the repository, including all branches and
+references:
+
+    git push --mirror codeberg
+
+This ensures the backup repository remains an exact copy of the source.
+
+
+SIMPLIFYING PUSHES WITH ALIASES
+
+Git aliases can be used to simplify repetitive operations.
+
+Example alias to push the main branch to multiple remotes:
+
+    [alias]
+        pushall = "!git push origin main && git push codeberg main"
+
+After defining this alias, pushing becomes:
+
+    git pushall
+
+Aliases are optional but useful when working with mirrored repositories
+on a daily basis.
+
+
+NOTES ON MIRRORING STRATEGY
+
+- use --mirror for full backups
+- use explicit branch pushes for daily work
+- avoid automatic background mirroring
+- keep mirrors intentionally boring and predictable
+
+
+CONCLUSION
+
+By using conditional Git configuration, explicit remotes, and simple
+aliases, it is possible to manage multiple repositories and mirrors
+without added complexity.
+
+This approach keeps workflows transparent, minimizes surprises, and
+aligns well with Unix and Slackware principles of clarity and control.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-03 05:44:46 UTC

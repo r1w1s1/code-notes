@@ -1,0 +1,89 @@
+USING NVI IN 2026
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| nvi remains a perfectly valid editor in 2026 when used as part   |
+| of a simple Unix workflow. It does not aim to replace modern     |
+| editors, but to provide a predictable and minimal environment.   |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+There is a common assumption that modern development requires
+modern editors, plugins, and IDE-like features.
+
+But in practice, that is not always true.
+
+I use nvi as part of a simple workflow:
+
+    st + screen + nvi + coreutils
+
+And it works perfectly fine.
+
+
+BACKGROUND
+
+nvi was not written to improve vi.
+It was written so vi could survive.
+
+BSD needed a legally clean implementation that behaved exactly
+like the original editor. The goal was compatibility, not innovation.
+
+Because of that, nvi remains:
+
+    - predictable
+    - minimal
+    - stable
+
+
+WORKFLOW
+
+Many of the features people expect from modern editors can be
+replaced by combining simple tools:
+
+    grep, find, sort, column, wc, make, git
+
+Additional tools such as fzf, fmt, or pandoc can be integrated
+naturally when needed.
+
+The editor becomes just one component of the system, not the center.
+
+
+ADVANTAGES
+
+This approach has some advantages:
+
+    - no plugins
+    - no breakage after updates
+    - works on any Unix system
+    - encourages understanding instead of abstraction
+
+
+LIMITATIONS
+
+This is not for everyone.
+
+Some workflows benefit from IDE features and automation.
+Terminal multiplexers (tmux or screen) are typically used to
+complement this workflow.
+
+
+CONCLUSION
+
+For many tasks — system administration, scripting, debugging,
+text processing — nvi is more than enough.
+
+Using nvi in 2026 is completely fine.
+
+
+REFERENCES
+
+Inspired by a comment by chongli on Hacker News (2017-03-26):
+https://news.ycombinator.com/item?id=13959104
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-03-27 22:27:59 UTC

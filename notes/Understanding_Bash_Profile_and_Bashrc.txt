@@ -1,0 +1,261 @@
+UNDERSTANDING .bash_profile AND .bashrc
+
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| .bash_profile runs once when you log in.                         |
+| .bashrc runs every time you open a new interactive shell.        |
+| Keeping them separate avoids a common class of configuration     |
+| problems.                                                        |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+Most Linux users eventually need to customize their shell. The two
+files involved are ~/.bash_profile and ~/.bashrc.
+
+They serve different purposes, are loaded at different times, and
+mixing them up is one of the most common sources of confusion for
+new users.
+
+This document is written for Slackware. Slackware follows the
+default behavior documented in bash(1) without modifications.
+There are no distribution-specific wrappers, no pre-built user
+dotfiles, and no custom sourcing logic. You write your shell
+files yourself, following upstream conventions.
+
+
+WHAT DOES "rc" MEAN
+
+The "rc" in .bashrc stands for "run commands." The convention
+dates back to CTSS (Compatible Time-Sharing System) at MIT in
+the early 1960s, where a "runcom" was a file containing commands
+to be executed automatically.
+
+Unix adopted this convention and it has been used ever since:
+/etc/rc, .cshrc, .vimrc, .bashrc. In every case the meaning is
+the same: a file of commands that runs at startup.
+
+
+TWO TYPES OF SHELL
+
+Bash distinguishes between two types of shell:
+
+    login shell
+        Started when you log in at a TTY, or via SSH.
+        Reads ~/.bash_profile (or ~/.profile if it does not exist).
+
+    non-login interactive shell
+        Started when you open a terminal emulator inside a graphical
+        session, or open a new pane in a multiplexer like tmux or
+        screen.
+        Reads ~/.bashrc.
+
+This distinction matters because each file is loaded in different
+situations.
+
+Some terminal emulators can be configured to start bash as a login
+shell (using bash --login or similar options). In that case, the
+terminal reads ~/.bash_profile instead of ~/.bashrc directly. This
+is another reason the bridge between the two files matters.
+
+
+WHAT GOES WHERE
+
+~/.bash_profile is for things that should be set once per session
+and inherited by every child process:
+
+    - PATH
+    - EDITOR, VISUAL
+    - other exported environment variables
+
+These are inherited by X, GUI applications, scripts, and every
+shell started afterward.
+
+~/.bashrc is for things that only make sense inside an interactive
+shell and cannot be inherited:
+
+    - aliases
+    - shell functions
+    - prompt settings
+    - shopt settings
+    - bash completion
+
+These must be reloaded in each new shell because they are not
+passed through the environment.
+
+
+THE BRIDGE
+
+A login shell reads ~/.bash_profile but not ~/.bashrc.
+A non-login shell reads ~/.bashrc but not ~/.bash_profile.
+
+This means that without a bridge, a login shell would have
+environment variables but no aliases or prompt.
+
+The standard solution is to source ~/.bashrc from ~/.bash_profile:
+
+    # ~/.bash_profile
+    [ -f ~/.bashrc ] && . ~/.bashrc
+
+This way, login shells get both layers. Non-login shells still
+get their own layer directly.
+
+
+A MINIMAL EXAMPLE
+
+~/.bash_profile:
+
+    export EDITOR=vi
+    export VISUAL=vi
+    PATH="$HOME/.local/bin:$PATH"
+    export PATH
+
+    [ -f ~/.bashrc ] && . ~/.bashrc
+
+~/.bashrc:
+
+    case "$-" in
+      *i*) ;;
+      *) return ;;
+    esac
+
+    alias ls='ls --color=auto'
+    alias ll='ls -lh'
+
+The case guard at the top of .bashrc checks the special variable
+"$-", which contains the option flags active in the current shell.
+If the letter "i" is present, the shell is interactive and .bashrc
+continues normally. If not, it returns immediately. This prevents
+.bashrc from running in non-interactive contexts (such as scp or
+rsync), where aliases and prompt settings would cause problems.
+
+
+THE /etc/profile.d/ GAP
+
+On Slackware, /etc/profile sources every script in /etc/profile.d/
+during login. These scripts provide system-wide shell features such
+as bash completion or directory jumpers like z.
+
+Non-login shells skip /etc/profile entirely. This means that
+features installed via SlackBuilds into /etc/profile.d/ may not
+work in terminal emulators or multiplexer panes.
+
+For example, a user may log into X normally and later open a new
+terminal emulator window, a tmux pane, a GNU screen window, or an
+mtm session. Those shells are usually non-login shells and therefore
+do not read /etc/profile.
+
+As a result, features provided through /etc/profile.d/ may appear
+to "work sometimes but not always" depending on how the shell was
+started.
+
+A common fix is to source those scripts from ~/.bashrc, but only
+for non-login shells (to avoid loading them twice):
+
+    if ! shopt -q login_shell; then
+        for sh in /etc/profile.d/*.sh; do
+            [ -x "$sh" ] && . "$sh"
+        done
+        unset sh
+    fi
+
+When reproducing behavior from system startup files, it is generally
+best to match the original logic exactly instead of approximating it.
+Small differences like -r versus -x can change shell behavior in
+subtle ways.
+
+Note that some scripts in /etc/profile.d/ are not designed to
+be sourced multiple times. The login_shell guard above prevents
+double-sourcing in most cases, but be aware of this when
+debugging unexpected behavior.
+
+
+BEST PRACTICE
+
+Keep ~/.bash_profile minimal. It should contain environment
+variable exports, source ~/.bashrc, and nothing else. Place
+all interactive logic in ~/.bashrc.
+
+This way, ~/.bashrc remains the single source of truth for
+interactive shell behavior, and ~/.bash_profile acts only as
+the environment layer that runs once at login.
+
+
+COMMON MISTAKES
+
+Putting PATH in .bashrc
+    PATH grows longer every time a new shell is opened because
+    .bashrc runs repeatedly. Exported variables belong in
+    .bash_profile. Note that multiplexers like tmux and screen
+    inherit the parent environment, so PATH is already set. If
+    PATH is modified in .bashrc, each new pane adds duplicate
+    entries.
+
+Putting aliases in .bash_profile
+    Aliases are shell-local and not inherited by child processes.
+    A new terminal window will not have them unless they are in
+    .bashrc.
+
+Not sourcing .bashrc from .bash_profile
+    Login shells end up with no aliases, no prompt customization,
+    and no completion.
+
+No interactive guard in .bashrc
+    Non-interactive invocations (scp, rsync, shell scripts) may
+    break or produce unexpected output.
+
+
+LOAD ORDER SUMMARY
+
+    login shell (tty, ssh):
+        /etc/profile → /etc/profile.d/*.sh → ~/.bash_profile → ~/.bashrc
+
+    non-login shell (terminal emulator, tmux pane):
+        ~/.bashrc
+
+    non-interactive (scp, scripts):
+        only $BASH_ENV, if set (user dotfiles are not read)
+
+    logout (login shell exit):
+        ~/.bash_logout, if it exists
+
+~/.bash_logout is read when a login shell exits. It is rarely
+used in practice, but it is available for cleanup tasks such as
+clearing the screen or removing temporary files.
+
+
+PORTABILITY
+
+Other distributions deviate from upstream bash behavior. Debian
+and Ubuntu redirect users toward ~/.profile and ship a pre-built
+~/.bashrc with guards and completions. Red Hat and Fedora ship
+/etc/bashrc which their default ~/.bashrc sources automatically.
+These are distribution choices, not bash standards.
+
+Slackware follows bash(1) as-is. Everything described in this
+document is standard bash behavior, not Slackware-specific logic.
+A setup built this way will work on any distribution because it
+follows the upstream specification rather than working around it.
+
+
+CONCLUSION
+
+The separation between .bash_profile and .bashrc exists for a
+reason. Environment variables are set once and inherited.
+Interactive settings are loaded fresh in each shell.
+
+Understanding this distinction removes most shell configuration
+problems.
+
+
+REFERENCES
+
+bash(1) manual, INVOCATION section.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-04-25

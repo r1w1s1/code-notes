@@ -1,0 +1,118 @@
+GIT BASH COMPLETION ON SLACKWARE
+
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| Bash completion may already work while Git completion does not.  |
+| Git completion is a separate layer that must be registered.      |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+Slackware provides programmable shell completion through the
+bash-completion package.
+
+General completion support may already be active while Git-specific
+completion is still unavailable. This happens because Git completion
+is implemented as a separate completion script that must be loaded
+into the current shell.
+
+The behavior can vary depending on whether the shell is started as
+a login shell or a non-login interactive shell.
+
+
+CHECKING BASH COMPLETION
+
+To verify that bash-completion itself is active:
+
+    type _init_completion
+
+If completion support is loaded, bash prints that
+_init_completion is a function.
+
+Example:
+
+    _init_completion is a function
+
+
+CHECKING GIT COMPLETION
+
+Git completion is registered separately.
+
+To verify whether it is active:
+
+    complete -p git
+
+If nothing is printed, Git completion has not been loaded into the
+current shell.
+
+
+LOCATING THE GIT COMPLETION SCRIPT
+
+On Slackware, the script is usually installed under:
+
+    /usr/doc/git-<version>/contrib/completion/
+
+Locate it with:
+
+    find /usr/doc -name git-completion.bash 2>/dev/null
+
+
+MANUAL TEST
+
+Load the script manually:
+
+    . /usr/doc/git-*/contrib/completion/git-completion.bash
+
+Then test completion:
+
+    git che<TAB>
+
+If Git completion works, bash expands the command:
+
+    git checkout
+
+
+NON-LOGIN SHELLS
+
+Many terminal emulators, tmux panes, GNU screen windows, and mtm
+sessions start bash as a non-login interactive shell.
+
+Non-login shells do not read /etc/profile automatically. As a
+result, scripts installed under /etc/profile.d/ may not be loaded.
+
+This can lead to situations where bash-completion partially works
+or behaves differently depending on how the shell was started.
+
+
+ADDING GIT COMPLETION TO ~/.bashrc
+
+If desired, Git completion can be loaded explicitly from ~/.bashrc:
+
+    if [ -f /usr/doc/git-*/contrib/completion/git-completion.bash ]; then
+        . /usr/doc/git-*/contrib/completion/git-completion.bash
+    fi
+
+This ensures Git completion is available in terminal emulators and
+multiplexer panes.
+
+
+NOTES
+
+Slackware uses executable permissions on scripts inside
+/etc/profile.d/ as the mechanism to enable or disable them.
+
+When reproducing shell startup logic manually, matching the original
+Slackware behavior exactly is usually preferable.
+
+
+REFERENCES
+
+bash(1) manual, Programmable Completion section.
+git(1) documentation.
+
+------------------------------------------------------------------
+
+Last Modified: 2026-05-09

@@ -1,0 +1,269 @@
+RUNNING SLACKWARE ON QEMU
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| This document describes a minimal Slackware-on-QEMU setup using  |
+| direct qemu-system commands, KVM acceleration, UEFI (OVMF), and  |
+| raw disk images. It avoids libvirt and management layers and is  |
+| intended for development, testing, and SlackBuild work.          |
++------------------------------------------------------------------+
+
+OVERVIEW
+
+This document describes a minimal and transparent setup for running
+Slackware virtual machines using QEMU with KVM acceleration and UEFI
+firmware support.
+
+The environment is intended for development, testing system changes,
+and building SlackBuilds without affecting the host system.
+
+The focus is on:
+
+- direct use of QEMU (no libvirt)
+- UEFI boot using OVMF
+- raw disk images
+- simple networking
+- predictable, reproducible commands
+
+
+DESIGN GOALS
+
+This setup follows the same principles as Slackware itself:
+
+- explicit configuration
+- minimal abstraction
+- no hidden state
+- tools should do exactly one thing, clearly
+
+QEMU is invoked directly from the command line. No management layer,
+XML configuration, or background daemons are used.
+
+UEFI is preferred over legacy BIOS to match modern hardware and ensure
+that Slackware behaves the same inside and outside virtual machines.
+
+
+ASSUMPTIONS
+
+- Slackware is running on the host system
+- QEMU and KVM are available
+- the user has root or sudo access
+- virtual machines are used for development or testing, not production
+
+
+HOST REQUIREMENTS
+
+KVM acceleration requires access to /dev/kvm.
+
+The user must be part of the `kvm` group:
+
+    usermod -aG kvm r1w1s1
+
+Log out and log back in for the change to take effect.
+
+
+QEMU BUILD NOTES
+
+UEFI support requires a QEMU build that includes OVMF firmware support.
+
+A modified SlackBuild is used to ensure proper integration with
+Slackware and reliable OVMF support:
+
+    https://github.com/r1w1s1/slackbuilds/tree/master/OVERLAY/system/qemu
+
+
+UEFI FIRMWARE (OVMF)
+
+UEFI firmware is provided by the edk2-ovmf package from SlackBuilds.org:
+
+    https://slackbuilds.org/repository/15.0/system/edk2-ovmf/
+
+After installation, the firmware file should be available at:
+
+    /usr/share/edk2-ovmf-x64/OVMF_CODE.fd
+
+
+DISK IMAGES
+
+Raw disk images are used for simplicity and performance.
+
+Create a new image:
+
+    qemu-img create -f raw slackware.raw 20G
+
+No partitioning or filesystem is created at this stage.
+
+
+INSTALLING SLACKWARE
+
+Boot the Slackware installer using OVMF and a q35 machine type:
+
+    qemu-system-x86_64                                               \
+      -machine q35,accel=kvm                                         \
+      -boot menu=on                                                  \
+      -m 2G                                                          \
+      -cpu max                                                       \
+      -smp 2                                                         \
+      -cdrom /home/r1w1s1/VMs/ISOs/slackware64-current-install-dvd.iso \
+      -drive file=/home/r1w1s1/VMs/slackware.raw,format=raw           \
+      -bios /usr/share/edk2-ovmf-x64/OVMF_CODE.fd
+
+Proceed with the Slackware installation normally.
+
+Do NOT install LILO.
+UEFI systems must use GRUB.
+
+
+BOOTLOADER SETUP (UEFI)
+
+Before rebooting at the end of the installer, open a shell and run:
+
+    chroot /mnt
+    source /etc/profile
+
+Install GRUB:
+
+    grub-install
+
+Ensure the UEFI fallback path exists:
+
+    mkdir -p /boot/efi/EFI/BOOT
+    cp /boot/efi/EFI/slackware-15+/grubx64.efi \
+       /boot/efi/EFI/BOOT/Bootx64.efi
+
+Generate initrd and GRUB configuration:
+
+    geninitrd
+    update-grub
+
+Install GRUB in removable mode:
+
+    grub-install --removable
+
+Exit and reboot.
+
+
+RUNNING THE VIRTUAL MACHINE
+
+Example command with:
+
+- KVM acceleration
+- SSH port forwarding
+- basic audio support
+
+    qemu-system-x86_64                                              \
+      -machine q35,accel=kvm                                        \
+      -boot menu=on                                                 \
+      -m 2G                                                         \
+      -cpu max                                                      \
+      -smp 2                                                        \
+      -drive file=/home/r1w1s1/VMs/slackware.raw,format=raw         \
+      -bios /usr/share/edk2-ovmf-x64/OVMF_CODE.fd                   \
+      -nic user,hostfwd=tcp::8888-:22                               \
+      -device AC97
+
+
+ACCESSING THE VM
+
+SSH from the host system:
+
+    ssh r1w1s1@127.0.0.1 -p 8888
+
+
+QEMU USER NETWORK DEFAULT ADDRESSES
+
+When using QEMU user networking (-nic user), the following virtual
+addresses are provided inside the guest system:
+
+    10.0.2.1   Default gateway
+    10.0.2.2   Host system (QEMU service endpoint)
+    10.0.2.3   DNS server
+    10.0.2.15  Guest IP (typical, assigned via DHCP)
+
+These addresses exist only within the QEMU user network and do not
+correspond to real network interfaces on the host.
+
+Each QEMU process using user networking creates its own private NAT
+network. Multiple guests may therefore receive the same IP address.
+
+
+HOST DIRECTORY SHARING
+
+Host directory sharing is performed over SSH using SSHFS.
+This approach is portable across Linux and BSD guests and does not
+require filesystem-specific kernel support.
+
+With QEMU user networking, the host is reachable from the guest at
+the virtual address 10.0.2.2.
+
+Inside the guest system, install SSHFS (package name may vary):
+
+    # FreeBSD
+    pkg install sshfs-fuse
+
+    # OpenBSD
+    pkg_add sshfs-fuse
+
+    # Linux
+    slackpkg install sshfs
+
+Create a mount point:
+
+    mkdir /mnt/host
+
+Mount the host home directory:
+
+    sshfs r1w1s1@10.0.2.2:/home/r1w1s1 /mnt/host
+
+Unmount when finished:
+
+    fusermount -u /mnt/host
+
+
+DISK RESIZING
+
+To increase the size of a raw disk image:
+
+Stop the virtual machine.
+
+Resize the image (example: add 10GB):
+
+    qemu-img resize slackware.raw +10G
+
+Boot the VM and resize the partition:
+
+    cfdisk /dev/sda
+
+Choose the resize option, confirm the new size, and write changes.
+
+The following assumes an ext4 filesystem.
+
+Finally, resize the filesystem:
+
+    resize2fs /dev/sda
+
+
+COMMON PITFALLS
+
+- forgetting to add the user to the `kvm` group
+- installing LILO instead of GRUB
+- missing the UEFI fallback Bootx64.efi path
+- resizing the image while the VM is running
+
+
+CONCLUSION
+
+QEMU provides a simple, auditable, and powerful virtualization
+environment on Slackware.
+
+By using raw images, UEFI firmware, SSH-based access, and direct QEMU
+commands, virtual machines remain easy to understand, easy to
+reproduce, and easy to maintain.
+
+This setup is intentionally minimal and well suited for development,
+testing, and SlackBuild work.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-21 21:43:04 UTC

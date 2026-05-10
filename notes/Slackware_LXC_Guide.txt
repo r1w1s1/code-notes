@@ -1,0 +1,80 @@
+**Tested using LXC version 6 on Slackware-current (15.1)**
+==========================================================
+
+Overview:
+--------
+
+This document provides instructions on setting up and running Slackware
+inside an LXC container. It covers enabling network bridges, container creation,
+starting and managing the container, and ensuring network connectivity.
+The guide is tested with LXC version 6 on Slackware-current (15.1).
+
+Enable Network Bridge
+
+    echo USE_LXC_BRIDGE=\"true\" > /etc/default/lxc-net
+
+Container Creation
+
+    mkdir /root/lxc-conf
+    echo lxc.net.0.type=\"veth\"    > /root/lxc-conf/slack-test.conf
+    echo lxc.net.0.flags=\"up\"    >> /root/lxc-conf/slack-test.conf
+    echo lxc.net.0.link=\"lxcbr0\" >> /root/lxc-conf/slack-test.conf
+
+Build the VM (for slackware-current)
+
+    MIRROR=http://mirrors.us.kernel.org/slackware lxc-create -n slack-test \
+    -t slackware -f /root/lxc-conf/slack-test.conf
+
+Build the vm (for slackware-15.0)
+
+    release=15.0 MIRROR=http://mirrors.us.kernel.org/slackware lxc-create -n slack-test \
+    -t slackware -f /root/lxc-conf/slack-test.conf
+
+Start the service
+
+    /usr/libexec/lxc/lxc-net start
+
+Start the vm
+
+    lxc-start -n slack-test
+
+Access the console
+
+    lxc-console -n slack-test
+
+Enable network (DHCP)
+
+    elvis /etc/rc.d/rc.inet1.conf
+
+We updated the USE_DHCP[0] field to say "yes" and saved the file.
+
+    lxc-stop -n slack-test
+    lxc-start -n slack-test
+
+Check if IP address assigned successfully
+
+    lxc-ls --fancy
+
+    NAME       STATE   AUTOSTART GROUPS IPV4       IPV6 UNPRIVILEGED
+    slack-test RUNNING 0         -      10.0.3.171 -    false
+
+Access the vm
+
+    lxc-console slack-test
+
+If use Slackware-15 as vm you should install gnupg
+
+    slackpkg -checkgpg=off install gnupg
+
+Make sure slackpkg working as expected.
+
+    slackpkg update gpg
+    slackpkg update
+
+
+Conlusion:
+---------
+
+By following this guide, you can successfully set up and run a Slackware container using LXC.
+This setup ensures proper network configuration, container management, and package updates.
+With LXC, Slackware can be efficiently virtualized while maintaining flexibility and performance.

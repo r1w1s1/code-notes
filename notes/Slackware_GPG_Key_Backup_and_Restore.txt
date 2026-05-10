@@ -1,0 +1,168 @@
+SLACKWARE GPG KEY BACKUP AND RESTORE
+
+OVERVIEW
+
+This document describes a simple and explicit method for backing up and
+restoring GPG keys on a Slackware system.
+
+The approach uses standard GnuPG commands to export public and private
+keys, encrypts the private key before storage, and keeps backups in a
+private Git repository for safekeeping. This allows keys to be easily
+recovered on a new system or after a system reinstallation.
+
+
+DESIGN GOALS
+
+- use standard GnuPG tooling
+- keep backups human-readable and auditable
+- avoid proprietary backup formats
+- allow easy restoration on new machines
+- keep private keys protected at all times
+
+
+ASSUMPTIONS
+
+- Slackware is running on the system
+- GnuPG is installed and configured
+- Git is installed and configured
+- the user has an existing GPG key
+- the user has access to a private Git repository
+
+
+BACKING UP GPG KEYS
+
+List available keys with full key IDs before exporting:
+
+    gpg --list-secret-keys --keyid-format LONG
+
+Export the public key:
+
+    gpg --armor --export your-email@example.com > public.key
+
+Export the private key using the full backup option to ensure all
+subkeys and metadata are included:
+
+    gpg --armor --export-secret-keys \
+        --export-options export-backup \
+        your-email@example.com > private.key
+
+Export the trust database:
+
+    gpg --export-ownertrust > ownertrust.txt
+
+Back up the revocation certificate. This certificate allows the key
+to be revoked on keyservers if it is ever compromised:
+
+    cp ~/.gnupg/openpgp-revocs.d/*.rev .
+
+These commands generate the following files:
+
+- public.key
+- private.key
+- ownertrust.txt
+- *.rev (revocation certificate)
+
+The private key must never be stored in plaintext. Encrypt it before
+storing anywhere:
+
+    gpg --symmetric --cipher-algo AES256 --output private.key.gpg private.key
+
+Remove the plaintext private key immediately after encryption:
+
+    rm private.key
+
+Verify the encrypted backup is readable before relying on it:
+
+    gpg --decrypt private.key.gpg > /dev/null
+
+
+STORING KEYS IN A PRIVATE GIT REPOSITORY
+
+Clone the backup repository:
+
+    git clone git@git.sr.ht:~r1w1s1/gpg-backup
+    cd gpg-backup
+
+Copy the files into the repository:
+
+    cp /path/to/public.key .
+    cp /path/to/private.key.gpg .
+    cp /path/to/ownertrust.txt .
+    cp /path/to/*.rev .
+
+Add and commit:
+
+    git add public.key private.key.gpg ownertrust.txt *.rev
+    git commit -m "Backup GPG keys"
+    git push -u origin main
+
+Only the encrypted private key should be stored. The plaintext private
+key must never be committed to any repository.
+
+
+RESTORING GPG KEYS ON A NEW SYSTEM
+
+Clone the backup repository:
+
+    git clone git@git.sr.ht:~r1w1s1/gpg-backup
+    cd gpg-backup
+
+Import the public key:
+
+    gpg --import public.key
+
+Decrypt and import the private key:
+
+    gpg --decrypt private.key.gpg | gpg --import
+
+Import the trust database:
+
+    gpg --import-ownertrust ownertrust.txt
+
+In most cases, importing ownertrust.txt restores the trust level
+automatically. If GPG operations warn about untrusted keys, set
+ultimate trust explicitly:
+
+    gpg --edit-key your-email@example.com
+    trust
+    5
+    quit
+
+Import the revocation certificate into the keyring so it is available
+if needed:
+
+    gpg --import *.rev
+
+Verify the key is available:
+
+    gpg --list-secret-keys --keyid-format LONG
+
+Remove the cloned repository after restore to avoid leaving key
+material on disk:
+
+    rm -rf gpg-backup
+
+
+REPOSITORY SECURITY
+
+- always use a private repository
+- prefer SSH authentication
+- never commit the plaintext private key
+- restrict repository access to trusted users only
+- enable two-factor authentication on the hosting provider where available
+
+
+CONCLUSION
+
+Backing up GPG keys is essential for maintaining long-term access to
+encrypted data, password stores, and signed commits.
+
+By encrypting the private key before storage and keeping backups in a
+secured private Git repository, Slackware users can maintain full
+control over their cryptographic material while ensuring reliable
+recovery when needed.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-03-07 15:07:18 UTC

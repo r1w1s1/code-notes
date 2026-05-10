@@ -1,0 +1,83 @@
+Creating a Local Mirror of Slackware64-current
+==============================================
+
+Overview:
+---------
+This document describes how to download and maintain a local Slackware
+mirror using AlienBob’s mirror script. It also explains how to use the
+mirror directly with slackpkg through a local directory. If you want to
+share the mirror across an internal network, refer to the three
+server-specific documents listed at the end.
+
+1. Download and Prepare the Mirror Script
+-----------------------------------------
+Download AlienBob's mirror script and make it executable:
+
+    cd /usr/local/bin
+    wget https://slackware.nl/people/alien/tools/mirror-slackware-current.sh
+    chmod +x mirror-slackware-current.sh
+
+2. Update Mirror Script Parameters
+----------------------------------
+Edit the script to define the maintainer and set the root directory:
+
+    vim /usr/local/bin/mirror-slackware-current.sh
+
+Modify the following lines:
+
+    BUILDER=${BUILDER:-"r1w1s1 <r1w1s1@xxx.com>"}
+    SLACKROOTDIR=${SLACKROOTDIR:-"/home/$USER/slackware-mirrors/slackware"}
+
+3. Create Directory for the Mirror
+----------------------------------
+Create the directory structure defined in SLACKROOTDIR:
+
+    mkdir -p /home/$USER/slackware-mirrors/slackware
+
+4. Run the Mirror Script
+------------------------
+Run the script to sync the mirror (requires ~18GB of disk space):
+
+    /usr/local/bin/mirror-slackware-current.sh
+
+This may take some time depending on your connection.
+
+5. Using the Local Mirror with slackpkg (Directory Mode)
+--------------------------------------------------------
+Slackpkg supports reading a mirror directly from your filesystem without
+running a web server. This is useful when the mirror is intended for
+local use on the same machine.
+
+Edit the slackpkg mirrors file:
+
+    vim /etc/slackpkg/mirrors
+
+Add the following line:
+
+    file:///home/$USER/slackware-mirrors/slackware64-current/
+
+(Remember to uncomment it by removing any leading “#”.)
+
+This method does not require any web server and is fully offline.
+
+6. Updating the Mirror
+----------------------
+To update your mirror periodically, simply rerun:
+
+    /usr/local/bin/mirror-slackware-current.sh
+
+You may also schedule updates using cron if desired.
+
+Conclusion
+----------
+This document covers how to create and maintain a Slackware mirror and
+how to use it locally through a directory with slackpkg. If you want to
+share your mirror across your internal network using HTTP, see:
+
+- Slackware_Serve_Local_Mirror_with_Apache.txt
+- Slackware_Serve_Local_Mirror_with_Darkhttpd.txt
+- Slackware_Serve_Local_Mirror_with_Static_Web_Server.txt
+
+These documents explain how to serve the mirror and configure slackpkg
+using a LAN-accessible URL.
+

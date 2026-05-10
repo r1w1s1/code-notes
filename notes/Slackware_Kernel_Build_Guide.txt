@@ -1,0 +1,136 @@
+Using Slackware Testing Kernel Tree to Build a New Kernel Version
+
+This guide uses Slackware's testing/source kernel tree as a base
+and upgrades it to a newer upstream version while preserving
+Slackware structure.
+
+
+------------------------------------------------------------------
+
+1. Mirror Slackware Testing Kernel Source
+
+Mirror the current testing kernel tree:
+
+   lftp -c "open https://mirrors.kernel.org/slackware/slackware64-current/source/k618/; mirror . k618"
+
+This creates a local directory containing:
+
+   doinst.sh/
+   kernel-configs/
+   slack-desc/
+   build-all-kernels.sh
+   kernel-generic.SlackBuild
+   kernel-headers.SlackBuild
+   kernel-source.SlackBuild
+   linux-6.18.20.tar.xz
+   linux-6.18.20.tar.sign
+
+
+------------------------------------------------------------------
+
+2. Prepare New Kernel Version
+
+Rename the directory to reflect the new branch:
+
+   mv k618 linux-6.19.x
+   cd linux-6.19.x
+
+Remove the old tarball:
+
+   rm linux-6.18.20.tar.*
+
+Download the new upstream kernel:
+
+   wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.19.11.tar.{xz,sign}
+
+
+------------------------------------------------------------------
+
+3. Update Kernel Config
+
+Extract kernel sources to /usr/src:
+
+   sudo tar -xf linux-6.19.11.tar.xz -C /usr/src
+   sudo ln -sfn linux-6.19.11 /usr/src/linux
+
+Copy existing Slackware config:
+
+   sudo cp kernel-configs/config-6.18.20.x64 /usr/src/linux/.config
+
+Update configuration:
+
+   cd /usr/src/linux
+   sudo make olddefconfig
+
+Save updated config back to build tree:
+
+   cp .config ~/linux-6.19.x/kernel-configs/config-6.19.11.x64
+
+
+------------------------------------------------------------------
+
+3.1 Apply Patches (optional)
+
+Patches from git.kernel.org must be downloaded manually using a
+browser. The site is protected by Anubis, a proof-of-work bot
+protection that blocks automated tools like curl and wget.
+
+To apply a patch manually:
+
+   cd /usr/src/linux
+   sudo patch -p1 < your-fix.patch
+
+
+------------------------------------------------------------------
+
+4. Build Slackware Kernel Packages
+
+From inside linux-6.19.x directory:
+
+   sudo ./kernel-source.SlackBuild
+
+   sudo KERNEL_SOURCE=/usr/src/linux \
+        KERNEL_CONFIG=./kernel-configs/config-6.19.11.x64 \
+        BUILD=1 \
+        ./kernel-generic.SlackBuild
+
+   sudo VERSION=6.19.11 BUILD=1 ./kernel-headers.SlackBuild
+
+
+------------------------------------------------------------------
+
+5. Install the New Kernel
+
+   sudo upgradepkg --install-new /tmp/kernel-generic-6.19.11-x86_64-1.txz
+   sudo upgradepkg --install-new /tmp/kernel-headers-6.19.11-noarch-1.txz
+
+
+------------------------------------------------------------------
+
+Initrd Handling
+
+Slackware's kernel-generic package includes doinst.sh,
+which automatically runs geninitrd after installation
+when appropriate.
+
+Behavior is controlled by:
+
+  /etc/default/geninitrd
+
+Manual initrd generation is normally not required.
+
+
+------------------------------------------------------------------
+
+Notes
+
+- Do not rename package names.
+- Do not modify SlackBuild naming.
+- Use version number for differentiation.
+- Testing directories may change; mirror once and maintain locally.
+- Preserve Slackware directory layout for compatibility.
+- git.kernel.org is protected by Anubis; patches must be downloaded
+  manually via a browser.
+
+This workflow mirrors Slackware's source/k structure
+while allowing independent upstream kernel tracking.

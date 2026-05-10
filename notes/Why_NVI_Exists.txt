@@ -1,0 +1,205 @@
+NVI WAS NOT WRITTEN TO IMPROVE VI.
+IT WAS WRITTEN SO VI COULD SURVIVE.
+
+
+TL;DR
+
+nvi exists because the original vi could not be freely redistributed.
+
+BSD needed a legally clean vi that behaved exactly like the original.
+Keith Bostic reimplemented vi to preserve compatibility, not to
+change the user experience.
+
+nvi is vi, rebuilt so the standard Unix editor could survive.
+
+
+OVERVIEW
+
+nvi exists because the original vi could not be shipped.
+
+Not because vi was broken.
+Not because it needed improvement.
+But because it was not freely redistributable.
+
+This document explains why Keith Bostic reimplemented vi, why the
+editor was named nvi ("New vi"), and why this work mattered for BSD
+and modern Unix systems.
+
+
+THE PROBLEM WITH VI
+
+By the late 1980s, vi was the standard Unix editor.
+
+Its behavior defined expectations.
+Its commands defined muscle memory.
+
+However, vi's source code was not fully redistributable.
+
+The original vi/ex codebase remained tied to AT&T Unix licensing,
+partly due to historical code relationships with ed and the original
+Unix source tree.
+
+For BSD, this was a hard blocker.
+
+A freely redistributable operating system could not ship a core tool
+that depended on proprietary source code.
+
+
+BSD NEEDED A REAL VI
+
+BSD did not want:
+
+    - a partial replacement
+    - a feature-rich alternative
+    - a "mostly compatible" editor
+
+It needed a real vi.
+
+Same commands.
+Same behavior.
+Same corner cases.
+
+And no legal restrictions.
+
+
+WHY THE NAME "NVI"
+
+The name nvi stands for "New vi".
+
+The name was intentionally conservative.
+
+It did not signal a new editor model, a new interface, or a new
+philosophy. It simply marked a new implementation.
+
+From the user's point of view, nvi was meant to be vi.
+
+The name distinguishes the codebase, not the editor.
+
+
+KEITH BOSTIC'S MOTIVATION
+
+Keith Bostic was not trying to redesign vi.
+
+The goal was not to extend it, modernize it, or compete with other
+editors.
+
+The goal was to remove a constraint.
+
+BSD needed a vi implementation that was:
+
+    - legally redistributable
+    - behaviorally correct
+    - suitable as a system default
+
+The only viable solution was a clean reimplementation built on an
+independent codebase.
+
+
+FROM VI CLONES TO NVI
+
+Early work in the community showed that a clean vi-like editor was
+possible. Projects such as elvis demonstrated that vi behavior could
+be replicated without using AT&T source code.
+
+However, BSD required stricter guarantees than typical clones
+provided.
+
+Behavior had to match vi closely.
+POSIX compliance mattered.
+Subtle and undocumented behavior mattered.
+
+nvi evolved into its own implementation focused on these goals.
+
+
+HIDDEN INNOVATION UNDER STRICT CONSTRAINTS
+
+While nvi was required to look identical to the original vi, its
+internal structure had to be completely redesigned.
+
+This was necessary both to avoid legal issues and to support long-term
+maintenance.
+
+Innovation was allowed only if it did not change observable behavior.
+
+The result was an editor that behaved like vi, but was internally
+cleaner and more maintainable.
+
+
+REPRODUCING BEHAVIOR
+
+nvi was not only expected to work.
+
+It was expected to reproduce even subtle and undocumented behaviors
+of the original vi.
+
+If a sequence of keystrokes produced a specific result in AT&T vi,
+nvi was expected to behave the same way.
+
+This included:
+
+    - command behavior
+    - screen updates
+    - redraw logic
+    - interaction details
+
+In system tools, predictability mattered more than isolated
+correctness.
+
+
+SEPARATION OF ENGINE AND INTERFACE
+
+One of the most important design decisions in nvi was separating the
+editing engine from the display logic.
+
+The original vi was tightly coupled to the terminal.
+
+nvi introduced a clearer boundary between core editing logic and
+screen handling.
+
+This improved portability, maintainability, and adaptability without
+changing user behavior.
+
+
+WHY THIS MATTERED
+
+Because of nvi:
+
+    - BSD could ship a complete, redistributable system
+    - vi remained the standard editor
+    - user muscle memory was preserved
+    - fragmentation was avoided
+
+nvi was not about changing vi.
+
+It was about preserving it.
+
+
+WHY I STILL USE NVI
+
+I use nvi not because it is modern, but because it is intentional.
+
+It exists for a specific reason.
+It respects established behavior.
+It avoids unnecessary reinvention.
+
+Like many Unix tools, it solves a concrete problem and gets out of
+the way.
+
+
+NOTE
+
+In a personal email exchange, Keith Bostic described how nvi came to be:
+
+    "Nvi was one of the projects I never planned on doing,
+     I just kind of backed into it accidentally.
+
+     ...we realized that inside of the original vi there was
+     a big chunk of the AT&T ed source code...
+
+     I literally opened up an edit window that day,
+     starting out with 'main(argc, argv)'."
+
+Shared here with appreciation for the historical context.
+
+
+Last Modified: 2026-04-03

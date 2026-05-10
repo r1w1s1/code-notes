@@ -1,0 +1,146 @@
+UNDERSTANDING SLACKWARE’S PHILOSOPHY
+
+OVERVIEW
+
+Slackware is one of the oldest surviving GNU/Linux distributions.
+Rather than chasing trends or rapid change, Slackware has always
+prioritized simplicity, transparency, and long-term stability.
+
+This document explains the design philosophy behind Slackware, the
+trade-offs it makes, and why those choices still matter today.
+
+
+HISTORICAL CONTEXT
+
+Slackware was first released in 1993 and has been maintained since then
+by Patrick Volkerding.
+
+Unlike many modern distributions, Slackware did not evolve around
+corporate backing, strict release schedules, or large development teams.
+Instead, it follows a Benevolent Dictator For Life (BDFL) model, where
+final technical decisions are made by a single, long-term maintainer.
+
+Releases are made when the system is considered ready, not according to
+a fixed calendar.
+
+
+SIMPLICITY AS A CORE PRINCIPLE
+
+Slackware values internal simplicity over convenience.
+
+Configuration files are plain text.
+System behavior is explicit rather than abstracted.
+There are few hidden layers between the administrator and the system.
+
+This does not necessarily make Slackware easier to use, but it makes the
+system easier to understand, debug, and maintain over time.
+
+
+CONSERVATIVE SOFTWARE CHOICES
+
+Slackware favors well-tested software and avoids unnecessary churn.
+
+New technologies are adopted cautiously and only when they are mature
+and clearly beneficial. Examples include the late adoption of PAM and
+elogind, which were only introduced in Slackware 15.0 after long
+evaluation.
+
+This conservatism reduces surprise, breakage, and long-term maintenance
+costs.
+
+
+NO AUTOMATIC DEPENDENCY RESOLUTION
+
+Slackware does not use automatic dependency resolution.
+
+Instead, the base system is installed as a complete set, ensuring that
+dependencies are satisfied by design. Third-party software is built
+using SlackBuild scripts, which make dependencies explicit and visible.
+
+This approach avoids the complexity and failure modes commonly found in
+automatic dependency solvers, at the cost of requiring more awareness
+from the administrator.
+
+
+PLAIN PACKAGE MANAGEMENT
+
+Package management in Slackware is intentionally simple.
+
+Packages are standard tarballs (.txz).
+Tools such as installpkg, removepkg, and upgradepkg perform exactly what
+their names suggest.
+Installed package information is stored in plain text under
+/var/lib/pkgtools.
+
+There is no background service, no hidden state, and no opaque metadata.
+
+
+VANILLA UPSTREAM SOFTWARE
+
+Slackware ships software that is as close to upstream as possible.
+
+Patches are minimal and applied only when necessary.
+Documentation, headers, and examples are preserved.
+Behavior matches upstream expectations.
+
+This makes Slackware predictable for users familiar with upstream
+software and documentation.
+
+
+MINIMALISM AND USER RESPONSIBILITY
+
+Slackware assumes an engaged system administrator.
+
+It does not attempt to hide complexity behind graphical tools or
+automated configuration layers. Instead, it exposes the system as it
+is and expects the user to take responsibility for understanding it.
+
+This model favors learning, control, and long-term system mastery.
+
+
+NO SYSTEMD
+
+Slackware deliberately avoids systemd and retains traditional init
+systems.
+
+This choice aligns with Slackware’s preference for simple, auditable
+startup mechanisms and avoids tightly coupled management layers.
+
+
+WHO SLACKWARE IS FOR
+
+Slackware is well suited for users who:
+
+- value stability over novelty
+- want full control over their system
+- prefer understanding how things work internally
+- are comfortable editing configuration files
+- appreciate long-term consistency
+
+It is less suitable for users who expect automatic configuration,
+frequent upgrades, or distribution-specific abstractions.
+
+
+WHY SLACKWARE STILL MATTERS
+
+In an ecosystem increasingly dominated by complexity and abstraction,
+Slackware serves as a reminder that a Unix-like system can remain simple,
+transparent, and robust.
+
+Its philosophy emphasizes clarity over convenience and understanding
+over automation — values that remain relevant regardless of trends.
+
+
+CONCLUSION
+
+Slackware’s philosophy is not about being old-fashioned or resistant to
+change. It is about making deliberate choices, understanding trade-offs,
+and preserving simplicity where it matters.
+
+For users who value these principles, Slackware remains a uniquely
+coherent and dependable system.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-03 05:54:29 UTC

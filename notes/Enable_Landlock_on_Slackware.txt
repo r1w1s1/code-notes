@@ -1,0 +1,39 @@
+This document explains how to enable Landlock on Slackware-current
+when using kernel 6.14. Landlock is a security module that provides
+application sandboxing capabilities.
+
+1. Add the following line to `/etc/default/grub`:
+
+    GRUB_CMDLINE_LINUX_DEFAULT="lsm=landlock"
+
+
+2. Regenerate the GRUB configuration:
+
+    geninitrd
+
+
+3. Reboot your system and verify that Landlock is enabled:
+
+    sudo dmesg | grep landlock
+
+    Example output:
+
+    [    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-generic root=UUID=... ro lsm=landlock
+    [    0.068388] Kernel command line: BOOT_IMAGE=/boot/vmlinuz-generic root=UUID=... ro lsm=landlock
+    [    0.212270] LSM: initializing lsm=capability,landlock
+    [    0.212270] landlock: Up and running.
+
+Once enabled, you can use landrun on Slackware-current:
+https://slackbuilds.org/repository/15.0/network/landrun/
+
+
+4. Conclusion
+
+By enabling Landlock in Slackware-current, you can improve security by
+sandboxing applications.
+With the correct kernel parameters and  verification steps, you can
+take advantage of Landlock's features for process isolation.
+
+
+
+Last Modified: 2025-03-30 11:35:42

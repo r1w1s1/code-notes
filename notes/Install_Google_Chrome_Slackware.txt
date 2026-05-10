@@ -1,0 +1,40 @@
+How to install Google-Chrome in Slackware?
+------------------------------------------
+
+1. Download the Slackbuild
+--------------------------
+
+Slackware 15
+lftp -c "open https://mirrors.kernel.org/slackware/slackware64-15.0/extra/ && mirror google-chrome"
+
+OR
+
+Slackware current
+lftp -c "open https://mirrors.kernel.org/slackware/slackware64-current/extra/ && mirror google-chrome"
+
+
+2. Download Google Chrome
+-------------------------
+
+open http://www.google.com/chrome
+
+Click the download button, and select either:
+
+    < >  32 bit .deb (for Debian/Ubuntu)
+OR
+    < >  64 bit .deb (for Debian/Ubuntu)
+
+Save into google-chrome folder
+
+
+3. Then run the Slackbuild
+--------------------------
+
+./google-chrome.SlackBuild
+
+cd /tmp
+upgradepkg --install-new google-chrome-135.0.7049.52-x86_64-1.txz
+
+
+
+Last Modified: 2025-04-03 16:02:48

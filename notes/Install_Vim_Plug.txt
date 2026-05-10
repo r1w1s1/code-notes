@@ -1,0 +1,24 @@
+How to Install vim-plug (https://github.com/junegunn/vim-plug)
+
+    vim .vimrc
+
+    let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+    if empty(glob(data_dir . '/autoload/plug.vim'))
+       silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+       autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    endif
+
+Install vim-airline and nerdtree plugin
+
+    vim .vimrc.
+
+    call plug#begin()
+
+         Plug 'vim-airline/vim-airline'
+         Plug 'preservim/nerdtree'
+
+    call plug#end()
+
+To complete install the plugin, open vim and run:
+
+    :PlugInstall

@@ -1,0 +1,184 @@
+CONFIGURING A BASIC FIREWALL WITH UFW ON SLACKWARE
+
+
+OVERVIEW
+
+This document describes a minimal and explicit approach to configuring a
+basic firewall on Slackware using UFW (Uncomplicated Firewall).
+
+UFW provides a simplified interface for managing firewall rules while
+still allowing direct backend customization when required. This setup
+covers installation, basic rule management, enabling UFW at boot, and
+optional NAT support for gateway scenarios.
+
+
+DESIGN GOALS
+
+- keep firewall rules simple and readable
+- integrate cleanly with Slackware init scripts
+- avoid unnecessary firewall management daemons
+- support both workstation and gateway use cases
+- retain full control over backend firewall behavior
+
+
+ASSUMPTIONS
+
+- Slackware 15.0 or Slackware-current is in use
+- UFW is installed via SlackBuilds.org
+- the user has root access
+- basic networking is already functional
+
+
+INSTALLING UFW
+
+UFW is not part of the base Slackware distribution and must be installed
+from SlackBuilds.org:
+
+    https://slackbuilds.org/repository/15.0/network/ufw/
+
+
+BASIC FIREWALL POLICY
+
+A minimal workstation policy usually blocks incoming connections while
+allowing outbound traffic:
+
+    ufw default deny incoming
+    ufw default allow outgoing
+
+
+ADDING FIREWALL RULES
+
+Allow basic services such as SSH, HTTP, and a custom TCP port:
+
+    ufw allow SSH
+    ufw allow WWW
+    ufw allow 8080/tcp
+
+Rules are added immediately but are not enforced until UFW is enabled.
+
+
+ENABLING UFW ON SLACKWARE
+
+Enable the firewall:
+
+    ufw enable
+
+Slackware uses /etc/rc.d/rc.firewall during system startup. To integrate
+UFW with Slackware startup, replace rc.firewall with a symlink to
+rc.ufw:
+
+    ln -s /etc/rc.d/rc.ufw /etc/rc.d/rc.firewall
+
+Ensure the UFW init script is executable:
+
+    chmod 755 /etc/rc.d/rc.ufw
+
+With this setup, UFW will be activated automatically at boot.
+
+
+CHECKING FIREWALL STATUS
+
+To view current firewall rules:
+
+    ufw status
+
+Example output:
+
+    Status: active
+
+    To                         Action      From
+    --                         ------      ----
+    SSH                        ALLOW       Anywhere
+    WWW                        ALLOW       Anywhere
+    SSH (v6)                   ALLOW       Anywhere (v6)
+    WWW (v6)                   ALLOW       Anywhere (v6)
+
+To view rules with numbering (useful for deletion):
+
+    ufw status numbered
+
+
+REMOVING FIREWALL RULES
+
+List rules with numbers:
+
+    ufw status numbered
+
+Example:
+
+    To                         Action      From
+    --                         ------      ----
+    SSH                        ALLOW       Anywhere
+    WWW                        ALLOW       Anywhere
+    8080/tcp                   ALLOW       Anywhere
+
+Remove a rule by its number:
+
+    ufw delete 2
+
+
+NAT AND GATEWAY CONFIGURATION
+
+UFW does not provide a high-level NAT command but supports NAT through
+manual configuration. This is useful when the system acts as a gateway
+or performs internet sharing.
+
+
+ENABLING IP FORWARDING
+
+Edit the UFW sysctl configuration file:
+
+    vim /etc/ufw/sysctl.conf
+
+Ensure the following line is enabled:
+
+    net/ipv4/ip_forward=1
+
+Apply the change immediately:
+
+    sysctl -w net.ipv4.ip_forward=1
+
+
+ADDING NAT RULES
+
+Edit the UFW rules file:
+
+    vim /etc/ufw/before.rules
+
+Add the following near the top of the file, before the first *filter
+section:
+
+    *nat
+    :POSTROUTING ACCEPT [0:0]
+
+    # Replace eth0 with your external interface
+    # (for example: enp1s0 or wlan0)
+    -A POSTROUTING -s 192.168.0.0/24 -o eth0 -j MASQUERADE
+
+    COMMIT
+
+This configuration enables NAT for hosts in the 192.168.0.0/24 network
+using the selected outbound interface.
+
+
+RELOADING UFW
+
+Apply the changes by restarting UFW:
+
+    ufw disable
+    ufw enable
+
+
+CONCLUSION
+
+UFW provides a practical and understandable firewall interface for
+Slackware systems when combined with Slackware's native init scripts.
+
+By enabling UFW explicitly, integrating it with rc.firewall, and
+optionally configuring NAT through backend files, systems can be
+secured without sacrificing transparency or control.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-05-09 20:05:00 UTC

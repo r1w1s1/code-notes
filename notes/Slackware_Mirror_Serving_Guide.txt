@@ -1,0 +1,197 @@
+Serving a Slackware Mirror
+==========================
+
+Overview:
+---------
+This document describes how to serve a Slackware mirror using
+Apache. The primary goal is to share an existing Slackware mirror
+so other machines can update from a local or external source
+without relying on third-party mirrors.
+
+For single-machine use (no other machines need to access the
+mirror), Apache is unnecessary - configure slackpkg to read the
+mirror directly via file://. See the main mirror setup document
+for that case.
+
+
+Assumptions:
+------------
+- A Slackware mirror already exists on disk
+- The mirror is served as static files
+- slackpkg is used on client machines
+
+
+Design Decisions:
+-----------------
+Slackware package integrity is verified using checksums and GPG
+signatures. Because of this, HTTPS is not a strict requirement
+for either local or external mirrors.
+
+Serving the mirror over plain HTTP is a deliberate choice:
+- integrity is already guaranteed by signatures
+- configuration remains simple
+- no certificates or renewal processes are required
+
+If HTTPS is required for other reasons, Apache supports it
+natively via mod_ssl, or it can be added through a reverse
+proxy. That setup is out of scope for this document.
+
+
+Why Apache:
+-----------
+Apache is Slackware's default web server. It is part of the base
+install, receives security updates through the official Slackware
+patches, and is well audited for both internal and public-facing
+deployments. For serving a static mirror it requires only minor
+configuration.
+
+Smaller HTTP servers (quark, darkhttpd, etc.) were considered.
+They are fine for local-only or LAN-only use, but for serving a
+mirror that may be reachable from outside the local network,
+Apache is the more conservative choice.
+
+
+1. Apache
+---------
+Apache ships with Slackware. If for some reason it is not
+installed:
+
+    slackpkg install httpd
+
+
+2. Locate the DocumentRoot
+--------------------------
+Slackware's default Apache DocumentRoot is:
+
+    /var/www/htdocs
+
+(On some installations it may be /srv/httpd/htdocs. Check the
+DocumentRoot directive in /etc/httpd/httpd.conf.)
+
+
+3. Create a symlink to the mirror
+---------------------------------
+Symlink the mirror directory into DocumentRoot. Replace
+YOUR_USER with your actual username (do not use $USER -
+configuration files do not expand shell variables):
+
+    ln -s /home/YOUR_USER/slackware-mirrors/slackware64-current \
+          /var/www/htdocs/slackware64-current
+
+
+4. Allow Apache to traverse to the mirror
+-----------------------------------------
+Apache runs as the 'apache' user and must be able to traverse
+every directory in the path. Set the home directory to be
+traversable but not listable by others:
+
+    chmod o+x /home/YOUR_USER
+
+Make the mirror itself readable, with execute on directories
+only:
+
+    chmod -R o+rX /home/YOUR_USER/slackware-mirrors
+
+The capital X in "o+rX" only sets execute on directories,
+which is what's needed for static file serving.
+
+
+5. Set ServerName
+-----------------
+Edit /etc/httpd/httpd.conf and set:
+
+    ServerName YOUR_SERVER_IP:80
+
+For example:
+
+    ServerName 192.168.1.10:80
+
+This silences a startup warning and identifies the server in
+its responses.
+
+
+6. Restrict listening interface (optional)
+------------------------------------------
+By default Apache listens on all interfaces (Listen 80). If
+the mirror should only be reachable from the local network,
+this is fine. If it should only be reachable from the local
+machine, change the Listen directive in httpd.conf to:
+
+    Listen 127.0.0.1:80
+
+If the mirror will be exposed to the internet, ensure the
+firewall and any router port-forwarding rules are configured
+intentionally.
+
+
+7. Start Apache
+---------------
+    chmod +x /etc/rc.d/rc.httpd
+    /etc/rc.d/rc.httpd start
+
+
+8. Test from the server
+-----------------------
+    curl -I http://127.0.0.1/slackware64-current/
+
+You should see "HTTP/1.1 200 OK". If you get 403 Forbidden,
+see the troubleshooting section.
+
+
+9. Configure slackpkg on client machines
+----------------------------------------
+On each client machine, edit /etc/slackpkg/mirrors and
+uncomment exactly one line pointing to the server:
+
+    http://192.168.1.10/slackware64-current/
+
+Slackpkg requires that exactly one mirror line is uncommented;
+multiple uncommented lines or none will result in slackpkg
+doing nothing useful.
+
+Then run:
+
+    slackpkg update
+
+
+Troubleshooting
+---------------
+If you get "Forbidden":
+
+    tail -f /var/log/httpd/error_log
+
+Common causes:
+
+    "client denied by server configuration"
+        -> Apache config does not grant access to the path.
+           Check that the symlink lives inside DocumentRoot
+           and that the DocumentRoot's <Directory> block in
+           httpd.conf includes "FollowSymLinks" in Options.
+
+    "Permission denied: ... search permissions are missing
+     on a component of the path"
+        -> Filesystem permissions block Apache. Re-check the
+           chmod commands in step 4.
+
+To verify Apache can read the mirror as its runtime user:
+
+    sudo -u apache ls /var/www/htdocs/slackware64-current/
+
+If that fails with "Permission denied", the filesystem
+permissions are still wrong somewhere on the path.
+
+
+Notes on HTTPS:
+---------------
+HTTPS is optional for Slackware mirrors. Package integrity is
+verified by slackpkg via signatures regardless of transport.
+
+If HTTPS is desired, Apache supports it through mod_ssl - see
+the Apache documentation. This is not covered here.
+
+
+Conclusion:
+-----------
+Apache provides a stable, well-supported solution for serving
+a Slackware mirror. For static-file workloads on a home LAN or
+public-facing deployment, the configuration above is sufficient.

@@ -1,0 +1,154 @@
+SLACKWARE LOGIN MESSAGE WITH FORTUNE AND COWSAY
+
+OVERVIEW
+
+This document describes a simple and reversible method to enhance the
+Slackware login experience by displaying a random fortune message using
+cowsay, along with information about the last user login.
+
+The setup uses Slackware’s native /etc/profile.d mechanism and applies
+only to interactive login shells.
+
+
+DESIGN GOALS
+
+- use Slackware-native mechanisms
+- avoid background services or hooks
+- affect only interactive login shells
+- remain easy to disable or remove
+- preserve a clean and predictable login process
+
+
+ASSUMPTIONS
+
+- Slackware 15.0 or Slackware-current is in use
+- bsd-games is installed (provides fortune)
+- cowsay is installed
+- a Bourne-compatible login shell is used (sh, bash, etc.)
+- the user has root access
+
+
+REQUIRED PACKAGES
+
+The fortune program is provided by bsd-games:
+
+    slackpkg install bsd-games
+
+The cowsay package can be built from SlackBuilds.org:
+
+    lftp -c "open https://slackbuilds.org/slackbuilds/15.0/games/; mirror cowsay"
+    cd cowsay
+    sudo sh cowsay.SlackBuild
+    sudo installpkg /tmp/cowsay-*.t?z
+
+
+PROFILE SCRIPT SETUP
+
+Create the following file:
+
+    /etc/profile.d/fortune-cowsay.sh
+
+Add the content below:
+
+    #!/bin/sh
+    #
+    # Display last login information and a fortune message on
+    # interactive login shells.
+    #
+
+    # Do nothing if hushlogin exists
+    if [ -e "$HOME/.hushlogin" ]; then
+        return
+    fi
+
+    # Only run for interactive shells
+    case $- in
+    *i*)
+        echo
+
+        # Display last user login (ignore shutdown/reboot entries)
+        last -n 10 | grep -vE 'shutdown|reboot' | head -n 1 | \
+        awk '{ORS=""; print "Last login: " $1 " on " $2; $1=$2=""; print $0}' && echo ""
+
+        echo
+        if command -v cowsay >/dev/null 2>&1; then
+            fortune fortunes fortunes2 linuxcookie | cowsay
+        else
+            fortune fortunes fortunes2 linuxcookie
+        fi
+        echo
+        ;;
+    esac
+
+Make the script executable:
+
+    chmod +x /etc/profile.d/fortune-cowsay.sh
+
+
+DISABLING THE DEFAULT FORTUNE MESSAGE
+
+To avoid duplicate fortune output, disable Slackware’s default login
+fortune scripts:
+
+    chmod -x /etc/profile.d/bsd-games-login-fortune.sh
+    chmod -x /etc/profile.d/bsd-games-login-fortune.csh
+
+
+VERIFICATION
+
+Log in as a user with an interactive shell or start a new login session:
+
+    su -l username
+
+You should see:
+
+- a “Last login” line (excluding reboot and shutdown entries)
+- a random fortune displayed via cowsay (if installed)
+
+
+EXAMPLE OUTPUT
+
+A typical login may display output similar to the following:
+
+    Last login: user on pts/0 Mon May  5 22:01:45 2025
+
+     _______________________________________
+    / You will be attacked by a beast with \
+    \ big teeth. Film at 11.               /
+     ---------------------------------------
+            \   ^__^
+             \  (oo)\_______
+                (__)\       )\/\
+                    ||----w |
+                    ||     ||
+
+
+SUPPRESSING THE MESSAGE PER USER
+
+To disable the login message for a specific user, create an empty file:
+
+    touch ~/.hushlogin
+
+This follows standard Unix behavior and requires no further changes.
+
+
+NOTES
+
+- If cowsay is not installed, only the fortune message is displayed
+- The script affects login shells only
+- Non-interactive shells are not impacted
+
+
+CONCLUSION
+
+Using /etc/profile.d to display a fortune and login information is a
+clean and idiomatic way to customize Slackware’s login environment.
+
+This approach adds personality without sacrificing simplicity,
+predictability, or control, and can be disabled at any time with minimal
+effort.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-03 05:41:32 UTC

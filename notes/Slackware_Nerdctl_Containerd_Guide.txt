@@ -1,0 +1,102 @@
+Nerdctl and Containerd on Slackware -current
+============================================
+
+1. Overview  
+-----------
+
+This document provides a step-by-step guide for running containers on Slackware using containerd and nerdctl.  
+Containerd is a high-level container runtime that uses runc for low-level execution.  
+Nerdctl is a Docker-compatible CLI for containerd.  
+
+This setup avoids Docker’s heavier dependencies and does not require systemd.  
+
+To begin, install the following packages via SlackBuilds:  
+
+- go-md2man
+- runc  
+- cni-plugins  
+- containerd  
+- nerdctl  
+
+Modified SlackBuilds used in this guide are available at:  
+
+    https://git.sr.ht/~r1w1s1/slackbuilds/tree/main/item/modified  
+
+2. Starting containerd  
+----------------------
+
+The SlackBuild for containerd installs an init script at /etc/rc.d/rc.containerd.new.  
+
+Enable and start containerd manually:  
+
+    chmod +x /etc/rc.d/rc.containerd  
+    /etc/rc.d/rc.containerd start  
+
+To run containerd at boot, add the following lines to /etc/rc.d/rc.local:  
+
+    if [ -x /etc/rc.d/rc.containerd ]; then  
+      /etc/rc.d/rc.containerd start  
+    fi  
+
+3. Running nerdctl as root  
+--------------------------
+
+Since there is no systemd on Slackware, nerdctl is typically run as root via sudo.  
+If you do not have sudo configured, see:  
+
+    https://git.sr.ht/~r1w1s1/code-notes/blob/main/notes/Enable_Sudo_on_Slackware.txt  
+
+Example:  
+
+    sudo nerdctl run hello-world  
+
+Expected output confirms that the runtime and networking are working.  
+
+4. Networking with CNI plugins  
+-------------------------------
+
+The cni-plugins package installs networking helpers under /usr/libexec/cni.  
+On first use, nerdctl creates /etc/cni/net.d/nerdctl-bridge.conflist and a bridge interface nerdctl0.  
+
+Verify networking inside a busybox container:  
+
+    sudo nerdctl run --rm -it busybox sh  
+    / # ping -c2 8.8.8.8  
+
+You should see successful pings.  
+
+5. Exposing services  
+--------------------
+
+Run a container with ports mapped to the host:  
+
+    sudo nerdctl run -d -p 8080:80 nginx:alpine  
+
+Verify with curl:  
+
+    curl http://127.0.0.1:8080/  
+
+To stop and remove the container:  
+
+    sudo nerdctl ps  
+    sudo nerdctl rm -f <container-id>  
+
+6. Bash completion  
+------------------
+
+This SlackBuild installs a completion script at /usr/share/bash-completion/completions/nerdctl.  
+
+To use it, ensure the bash-completion package from Slackware extra is installed and sourced via /etc/profile.d/bash_completion.sh.  
+
+Note:  
+- Completions work with sudo nerdctl because completion happens before sudo executes.  
+- If you log in as root directly (sudo -i or su -), you must enable bash-completion in /root/.bashrc.  
+
+7. Conclusion  
+-------------
+
+With containerd and nerdctl, Slackware users can run containers without Docker or systemd.  
+The rc.containerd script integrates with Slackware’s init system, and nerdctl provides a familiar Docker-like CLI.  
+This setup is lightweight, simple, and compatible with Kubernetes tools for development and testing.  
+
+Last Modified: 2025-08-27  

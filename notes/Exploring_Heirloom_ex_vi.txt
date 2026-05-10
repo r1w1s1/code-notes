@@ -1,0 +1,333 @@
+EXPLORING HEIRLOOM-EX-VI: THE TRADITIONAL VI MODERNIZED
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| heirloom-ex-vi is the actual 1985 ex/vi 3.7 source code,         |
+| modernized by Gunnar Ritter and continued by Carsten Kunze.      |
+| It is small, clean, and faithful to the original vi.             |
+|                                                                  |
+| For daily editing of normal-sized files it is a pleasure.        |
+| For large files, ergonomic features like ruler, or multi-level   |
+| undo, nvi remains the more practical choice.                     |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+This document describes the heirloom-ex-vi editor, a continuation
+of the original Berkeley/AT&T ex/vi 3.7 source from 1985.
+
+Unlike nvi, which is a clean-room reimplementation written by Keith
+Bostic in 1994, heirloom-ex-vi descends directly from the actual
+historic source code released by Caldera under a free software
+license in 2002.
+
+The codebase is maintained on GitHub by Carsten Kunze (n-t-roff)
+and represents one of the smallest, most direct paths from the
+original vi to a modern Unix system.
+
+Upstream:
+
+    https://github.com/n-t-roff/heirloom-ex-vi
+
+
+LINEAGE
+
+The path from Bill Joy's original vi to today's heirloom-ex-vi
+involves three people across forty years:
+
+    Bill Joy            1976-1985   original ex/vi at UC Berkeley
+    Gunnar Ritter       2002-2007   modernization, UTF-8, dynamic
+                                    screen buffers, ANSI C
+    Carsten Kunze       2016-2022   bug fixes, ./configure script,
+                                    GitHub continuation
+
+Each maintainer made conservative additions. None expanded scope.
+The result is software that has been quietly improved without
+being reinvented.
+
+
+WHY USE HEIRLOOM-EX-VI?
+
+heirloom-ex-vi offers a distinct set of practical advantages:
+
+    - small, readable codebase (~25k lines vs nvi's ~38k)
+    - lower memory footprint (~3MB RSS vs nvi's ~6MB typical)
+    - direct lineage from the original 1985 source
+    - clean dependencies (libc and curses only)
+    - solid UTF-8 support for normal content
+    - faithful classic vi semantics
+    - hackable: small enough to read end to end
+
+It is well suited for users who appreciate minimal, finished
+software and who edit configuration files, source code, and
+similar normal-sized text.
+
+
+INTERNAL ARCHITECTURE
+
+heirloom-ex-vi uses the classic Unix temp-file approach for buffer
+storage, inherited directly from the 1985 source.
+
+Key points of this design:
+
+    * Temp file with line index:
+      The file being edited is copied to a temp file. An in-memory
+      table of line pointers is maintained, indexed by line number.
+
+    * Block-based access:
+      Lines are organized in fixed-size blocks within the temp
+      file. The line pointer table tells the editor which block
+      contains which line.
+
+    * Compile-time size limits:
+      The line pointer table has a hard ceiling defined at build
+      time by LBLKS in ex_tune.h. The default VMUNIX build sets
+      LBLKS=900, which allows roughly 230,000 lines or 30MB of
+      typical text.
+
+    * No external library dependencies:
+      Unlike nvi, heirloom does not link Berkeley DB or any other
+      database. The temp file scheme is self-contained.
+
+This architecture is simple and efficient for files within its
+limits, but does not scale to files of arbitrary size.
+
+
+SIZE LIMITS
+
+By default, heirloom-ex-vi can edit files up to approximately:
+
+    - 230,000 lines
+    - 30MB of typical text
+
+Files exceeding this limit produce the error:
+
+    Tmp file too large
+
+This is not a flaw. It is a design choice consistent with the
+Unix philosophy of using the right tool for the job. For very
+large files, line editors and stream tools (ed, sed, awk, grep)
+are more appropriate.
+
+If larger files must be edited interactively, heirloom can be
+rebuilt with the LARGEF compile-time option, which raises the
+ceiling to roughly 5 million lines and 5GB of text. This costs
+additional memory on every file regardless of size.
+
+
+MINIMAL CONFIGURATION (EXINIT)
+
+heirloom-ex-vi reads configuration from EXINIT or .exrc. A
+minimal setup using EXINIT might be:
+
+    export EXINIT='set showmode|set showmatch|set report=1|set list'
+
+Note that heirloom-ex-vi does not support the following options
+familiar from nvi:
+
+    - set ruler        no continuous cursor position display
+    - set searchincr   no incremental search
+
+For position information, the historic ^G command displays the
+current line number, total lines, and percentage through file
+on demand.
+
+For visual indent verification (useful in YAML and similar
+indent-sensitive files), set list shows tabs as ^I and end-of-line
+as $, making whitespace structure visible.
+
+
+UNDO AND BUFFERS
+
+heirloom-ex-vi follows the historic single-level undo model:
+
+    u     undo or redo the last change (toggles)
+    U     restore the current line to its original state
+
+Multi-level undo, as in nvi or vim, is not supported.
+
+For recovery of earlier deletions, the named registers a-z and the
+numbered deletion buffers 1-9 work as in classic vi:
+
+    "ayy  yank current line into register a
+    "ap   put register a after cursor
+    "1p   put the most recent deletion
+    "2p   put the second-most recent deletion
+
+
+UTF-8 SUPPORT
+
+heirloom-ex-vi handles UTF-8 correctly for typical modern text.
+
+Practical tests performed during evaluation included:
+
+    - Portuguese accented text:
+          ç á à â ã ê ó õ
+
+    - General Latin-1/Latin Extended text
+
+    - Mathematical and symbolic characters
+
+    - Emoji and 4-byte UTF-8 sequences
+
+    - Mixed UTF-8 text inside normal prose files
+
+    - CJK ideographs with correct double-width rendering
+
+In normal terminal usage on modern UTF-8 systems, the editor
+behaved significantly better than many users would expect from
+a vi implementation rooted in the 1985 source code.
+
+Cursor movement, insertion, deletion, and screen rendering
+worked correctly during these tests.
+
+Combining characters (decomposed Unicode forms) have weaker
+support, as noted in the upstream TODO documentation. For
+pre-composed UTF-8 text, which is the common case on modern
+systems, this is generally not a practical problem.
+
+Compared to older vi clones such as elvis, heirloom-ex-vi
+provides noticeably more usable UTF-8 behavior for modern
+terminal workflows.
+
+
+SYNTAX HIGHLIGHTING
+
+heirloom-ex-vi does not include syntax highlighting. As with nvi,
+this is intentional design rather than missing feature.
+
+Highlighting can be obtained through external tools and the filter
+command. For example:
+
+    :w !source-highlight -s yaml -f esc | less -R
+
+This pipes the buffer through an external highlighter (such as
+GNU source-highlight) and displays the colorized output through
+less. The buffer itself is not modified.
+
+A small editor patch is required for ANSI escapes from the filter
+command to render correctly inside vi mode. Without it, the
+escape sequences are scrambled by vi's screen addressing. The
+patch is straightforward (8 lines of code in ex_cmds.c) and
+mirrors the terminal mode dance already used by the bare :!cmd
+handler.
+
+
+MEMORY COMPARISON
+
+Measured on a typical small file (5KB YAML configuration):
+
+    Editor              VSZ        RSS
+    heirloom-ex-vi      ~3.8MB     ~2.9MB
+    nvi 1.81.6          ~7.3MB     ~6.3MB
+
+heirloom uses roughly half the RSS of nvi for the same file.
+
+The difference comes from nvi's dependency on Berkeley DB 4.8,
+which adds a baseline cost in mapped library pages and DB engine
+state. heirloom links only libc and curses.
+
+For files larger than heirloom's ceiling, this comparison no
+longer applies, as heirloom cannot open them.
+
+
+WHEN HEIRLOOM-EX-VI IS A GOOD CHOICE
+
+heirloom-ex-vi is ideal for:
+
+    - users who value minimal, finished software
+    - editing normal-sized configuration files and source code
+    - learning how classic vi actually works (small codebase)
+    - environments where memory matters (~3MB vs ~6MB)
+    - users who appreciate the suckless aesthetic
+    - readers who want to understand the 1985 source directly
+
+It is less suitable for:
+
+    - very large files (above ~230k lines)
+    - workflows that depend on continuous ruler display
+    - workflows that depend on multi-level undo
+    - users who rely on multi-window editing within vi
+
+
+COEXISTENCE WITH NVI
+
+heirloom-ex-vi can coexist with nvi without conflict if installed
+to a non-system path. A typical setup keeps nvi as the system
+/usr/bin/vi and invokes heirloom explicitly:
+
+    alias hex='/path/to/heirloom-ex-vi/ex -v'
+
+This preserves the Slackware vi-ex switcher and any scripts that
+expect /usr/bin/vi to behave a certain way, while allowing
+heirloom to be used for personal editing.
+
+
+CONCLUSION
+
+heirloom-ex-vi is the actual original vi, modernized with care.
+It demonstrates how much can be achieved with a small, focused
+codebase maintained by people who respect the original design.
+
+For daily editing of normal-sized files, it is genuinely
+pleasant to use. The tradeoffs (no ruler, single-level undo,
+file size ceiling) are direct consequences of staying close to
+the 1985 source, not oversights.
+
+For users whose workflow depends on ergonomic extensions or who
+regularly edit large files, nvi remains the more practical choice.
+
+Both editors have their place. heirloom-ex-vi rewards the user
+who wants to read and understand the code as well as use it.
+
+
+APPENDIX: COMPARISON WITH OTHER VI IMPLEMENTATIONS
+
+heirloom-ex-vi:
+    - direct descendant of 1985 ex/vi 3.7
+    - smallest fully-featured traditional vi
+    - hackable, well-commented
+    - no ruler, single-level undo
+    - hard file size ceiling
+
+nvi:
+    - clean-room reimplementation (Bostic, 1994)
+    - active maintenance via Debian patchset
+    - ruler, multi-level undo, multi-window
+    - handles large files via Berkeley DB paging
+    - larger codebase, more dependencies
+
+elvis:
+    - independent reimplementation (Kirkendall, 1990)
+    - unique display modes (hex, syntax, HTML browse)
+    - limited UTF-8 support
+    - sparse maintenance since 2003
+
+busybox vi:
+    - extreme minimalism (~2300 lines)
+    - emergency/embedded use only
+    - no .exrc, no filter, no maps, no ex mode
+    - not suitable for daily use
+
+
+UPSTREAM AND HISTORICAL REFERENCES
+
+Project repository:
+
+    https://github.com/n-t-roff/heirloom-ex-vi
+
+Original Traditional Vi homepage (Gunnar Ritter, archived):
+
+    http://ex-vi.sourceforge.net/
+
+Related historical context:
+
+    https://en.wikipedia.org/wiki/Ancient_UNIX
+
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-05-09 00:35:00 UTC

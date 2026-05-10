@@ -1,0 +1,196 @@
+WAYLAND, X11, AND THE TRADE-OFFS OF MINIMALISM
+
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| Wayland’s core protocol is small and well-defined, but the       |
+| surrounding ecosystem is large, fast-moving, and complex.        |
+| This shifts responsibility upward into compositors and related   |
+| components, increasing maintenance costs for small projects.     |
+|                                                                  |
+| Minimal systems like X11, dwm, st, and doas succeed because      |
+| they have clear scope, stable interfaces, and a well-defined     |
+| notion of correctness. For users who value predictability and    |
+| long-term sustainability, X11 (or XLibre) remains a valid        |
+| and pragmatic choice today.                                      |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+This document collects and organizes a set of
+arguments around Wayland, X11, minimal window
+managers, and long-term system maintainability.
+
+It was motivated by a public discussion that began
+with the GNU/Linux vs Linux naming debate, and
+gradually expanded into related topics such as
+sudo vs doas, X11 vs Wayland, and broader questions
+about minimalism, scope, and long-term system
+maintainability.
+
+As often happens in technical discussions, the
+naming debate served as an entry point to deeper
+questions about design philosophy, ecosystem
+complexity, and the trade-offs between stability
+and rapid evolution, particularly from the
+perspective of BSD projects and minimal Unix
+workflows.
+
+Original discussion (context only):
+https://swiss.social/@LukePhilipps/115973122695310819
+
+Rather than replying inline, this text presents
+the arguments in a stable, standalone form. The
+goal is not to advocate for or against any single
+technology, but to document trade-offs that are
+often lost in fast-moving online discussions.
+
+The focus is on scope, correctness, ecosystem
+complexity, and sustainability over time, using
+concrete examples such as dwm, st, doas, wlroots,
+and dwl.
+
+
+PURPOSE OF THIS DOCUMENT
+
+This document aims to explain why minimal, stable
+systems such as X11, dwm, and st remain valid and
+attractive choices for many users, despite the
+availability of newer technologies like Wayland.
+
+It is not an argument against Wayland, nor a claim
+that newer systems are inherently flawed. Instead,
+it documents the trade-offs involved in different
+design approaches, with a focus on scope, stability,
+and long-term maintainability.
+
+In particular, this document explores how minimalism
+can succeed when a project has clear objectives and
+a well-defined notion of correctness, and how the
+same minimalism can introduce costs when complexity
+is shifted to higher layers or external ecosystems.
+
+The goal is to provide a calm, experience-based
+perspective grounded in real systems, real projects,
+and real maintenance constraints.
+
+
+WHO THIS IS FOR
+
+This document is intended for:
+
+    - small teams and individual maintainers
+    - BSD developers and users
+    - users of minimal window managers
+      (dwm, pekwm, and similar)
+    - those evaluating X11 vs Wayland
+      for long-term or low-churn systems
+    - readers interested in system design
+      philosophy and long-lived interfaces
+
+
+ARGUMENTS
+
+Minimalism is often misunderstood as the absence of
+complexity. In practice, minimalism is about defining
+clear objectives, strict scope, and a precise notion
+of correctness. When done well, it produces systems
+that are stable, predictable, and maintainable over
+long periods of time.
+
+Projects such as dwm and st are examples of successful
+minimalism. They are small not because features were
+removed arbitrarily, but because their goals are
+explicit and limited. Each project defines clearly
+what problem it solves and, just as importantly, what
+it does not attempt to solve. This scope discipline
+keeps responsibility contained within the project
+itself.
+
+The sudo vs doas comparison illustrates the same idea.
+sudo grew large over decades due to accumulated
+compatibility requirements, enterprise integrations,
+policy layers, plugins, and edge cases. doas takes a
+different approach: it solves a narrower problem,
+keeps the codebase small and auditable, and accepts
+reduced flexibility as a conscious trade-off.
+
+Wayland introduces a different kind of minimalism.
+The Wayland protocol itself is small and well-scoped,
+but it deliberately avoids defining large parts of
+the display system that were historically handled by
+the X server. As a result, responsibility is shifted
+upward into compositors and surrounding components.
+
+This leads to an ecosystem where complexity does not
+disappear, but instead moves outward. Compositors,
+libraries, protocol extensions, portals, PipeWire,
+GPU and DRM assumptions, and session management all
+become part of the effective display stack. While
+each component may be reasonable in isolation, their
+combined rate of change creates friction.
+
+The paradox is that Wayland’s clean, minimal protocol
+can make building window managers harder rather than
+easier. Window managers and compositors must now
+implement functionality that was previously provided
+by the X server, increasing development effort and
+maintenance burden, especially for small projects.
+
+The dwl project provides a concrete example. dwl is
+intentionally minimal and closely modeled after dwm.
+However, it depends heavily on wlroots, which evolves
+rapidly. When wlroots changes frequently, even a small
+and clean compositor becomes difficult to maintain.
+The recent decision by the dwl maintainer to step back
+highlights the sustainability challenges created by
+this dependency chain.
+
+For projects with limited manpower, including many
+BSD projects, the primary difficulty is not the
+Wayland protocol itself, but the need to continuously
+track and adapt to changes in the surrounding layers.
+When interfaces do not stabilize, downstream projects
+spend most of their effort remaining compatible rather
+than improving functionality or reliability.
+
+X11 succeeded not because it was perfect, but because
+it eventually froze and became boring. Its interfaces
+stabilized, complexity was absorbed below window
+managers, and developers could rely on long-lived
+behavior. This stability enabled a wide ecosystem of
+small window managers and tools to thrive.
+
+Wayland may reach a similar level of stability in the
+future. Until then, choosing X11 or XLibre remains a
+reasonable and pragmatic decision for users whose
+workflows depend on predictability, minimalism with
+clear boundaries, and long-term sustainability.
+
+
+CONCLUSION
+
+Minimalism is not free. It is a design choice that
+demands clear scope, disciplined boundaries, and an
+explicit understanding of where complexity belongs.
+
+Systems like dwm, st, doas, and X11 demonstrate that
+minimalism works best when responsibility is clearly
+contained and interfaces are allowed to stabilize.
+
+Wayland represents a different set of trade-offs.
+Its goals are valid, but the surrounding ecosystem
+has not yet reached the level of stability required
+for small teams and long-lived systems to adopt it
+without significant cost.
+
+Until that stabilization occurs, choosing boring,
+predictable systems remains a rational and defensible
+engineering decision.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-31 18:29:05 UTC

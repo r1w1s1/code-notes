@@ -1,0 +1,12 @@
+Using Grub 2.12 in Slackware-current (15.1)
+
+        grub-install --target=x86_64-efi --efi-directory=/boot/efi/ --bootloader-id=Slackware --recheck
+        grub-mkconfig -o /boot/grub/grub.cfg
+
+Everytime update the kernel you should run:
+
+        grub-mkconfig -o /boot/grub/grub.cfg
+
+OR (this script comes with grub package)
+
+        update-grub

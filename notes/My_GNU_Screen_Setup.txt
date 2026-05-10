@@ -1,0 +1,174 @@
+GNU SCREEN ON MY LAPTOP
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| GNU screen gives me splits and session persistence without       |
+| opening multiple terminals. One st window, multiple panels,      |
+| simple workflow.                                                 |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+I use GNU screen to avoid opening many terminal windows.
+
+Instead of managing multiple st instances, I keep everything
+inside a single session with splits and windows.
+
+Setup:
+
+    st + screen + nvi + coreutils
+
+Nothing fancy. Just a minimal configuration and muscle memory.
+
+
+BACKGROUND
+
+GNU screen is old, stable, and widely available.
+
+It provides:
+
+    - session persistence (detach/reattach)
+    - window management
+    - panel splitting
+
+It is not modern, but it is reliable.
+
+
+WORKFLOW
+
+A typical workflow looks like:
+
+    - one screen session
+    - multiple splits (panels)
+    - each panel running a shell or nvi
+
+Navigation is kept simple using:
+
+    - Ctrl+A + Tab (default)
+    - vim-style hjkl bindings (custom)
+
+The goal is:
+
+    one terminal, everything inside
+
+
+CONFIGURATION
+
+File: ~/.screenrc
+
+    # No welcome message
+    startup_message off
+
+    # Mouse support (basic)
+    mousetrack on
+
+    # Better background handling
+    defbce on
+
+    # 256 colors
+    term screen-256color
+
+    # Preserve output after exit
+    termcapinfo xterm* ti@:te@
+
+    # Scrollback buffer
+    defscrollback 5000
+
+    # UTF-8
+    defutf8 on
+
+    # Window list
+    caption always "%{= kw}%-w%{= BW}%n %t%{-}%+w"
+
+    # Arrow navigation
+    bindkey "\001\033[A" focus up
+    bindkey "\001\033[B" focus down
+    bindkey "\001\033[D" focus left
+    bindkey "\001\033[C" focus right
+
+    # vim-style navigation
+    bind h focus left
+    bind j focus down
+    bind k focus up
+    bind l focus right
+
+
+CHEATSHEET
+
+File: ~/.screen-cheatsheet.txt
+
+    PREFIX: Ctrl+A
+
+    Splits:
+      Ctrl+A S       split horizontal
+      Ctrl+A |       split vertical
+      Ctrl+A Q       remove all splits
+      Ctrl+A X       remove current panel
+
+    Navigation:
+      Ctrl+A Tab     Next panel
+      Ctrl+A h  ←    Focus left
+      Ctrl+A j  ↓    Focus down
+      Ctrl+A k  ↑    Focus up
+      Ctrl+A l  →    Focus right
+
+    Windows:
+      Ctrl+A c       new window
+      Ctrl+A n       next window
+      Ctrl+A p       previous window
+      Ctrl+A "       list windows
+      Ctrl+A A       rename window
+
+    Session:
+      Ctrl+A d       detach
+      screen -r      reattach
+      screen -ls     list sessions
+
+    Kill:
+      screen -X -S <name> quit
+      screen -wipe
+      pkill screen   (nuclear)
+
+    Scrollback:
+      Ctrl+A [       copy/scroll mode
+
+
+QUICK ACCESS
+
+    alias screenhelp='cat ~/.screen-cheatsheet.txt'
+
+Then:
+
+    $ screenhelp
+
+
+ADVANTAGES
+
+    - no extra terminals
+    - persistent sessions
+    - minimal configuration
+    - works everywhere
+
+
+LIMITATIONS
+
+    - UI is not intuitive
+    - defaults are confusing
+    - needs custom bindings for usability
+
+
+CONCLUSION
+
+GNU screen remains a solid tool in 2026.
+
+If you want something simple, stable, and available on any Unix
+system, it does the job.
+
+One terminal. Multiple panels. No complexity.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-04-16

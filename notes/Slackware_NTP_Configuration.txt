@@ -1,0 +1,134 @@
+SLACKWARE NTP CONFIGURATION (BRAZIL / BRT)
+
+OVERVIEW
+
+This document describes a minimal and explicit configuration for
+synchronizing system time on Slackware using NTP (ntpd).
+
+The setup is scoped specifically for systems in Brazil, using servers
+from the Brazilian NTP pool. The goal is reliable and predictable time
+synchronization without additional tooling or abstraction layers.
+
+
+DESIGN GOALS
+
+- use Slackware’s native ntpd service
+- avoid unnecessary automation
+- keep configuration auditable and simple
+- prefer regional NTP servers for lower latency
+- ensure hardware and system clocks are consistent
+
+
+ASSUMPTIONS
+
+- Slackware is running on the system
+- ntp is installed (from the Slackware N series)
+- the system timezone is already set correctly
+- the user has root access
+
+
+INITIAL TIME SYNCHRONIZATION
+
+Before enabling ntpd, synchronize the system clock manually using a
+Brazilian NTP server:
+
+    ntpdate pool.ntp.br
+
+After the system time is correct, update the hardware clock:
+
+    hwclock --systohc --localtime
+
+This ensures both clocks start in a consistent state.
+
+
+NTP CONFIGURATION
+
+Edit the NTP configuration file:
+
+    vim /etc/ntp.conf
+
+Configure ntpd to use Brazilian NTP servers:
+
+    server a.st1.ntp.br iburst
+    server b.st1.ntp.br iburst
+    server c.st1.ntp.br iburst
+    server d.st1.ntp.br iburst
+    server gps.ntp.br iburst
+
+The iburst option allows faster initial synchronization when ntpd
+starts.
+
+
+ENABLING NTPD AT BOOT
+
+Make the rc.ntpd script executable:
+
+    chmod +x /etc/rc.d/rc.ntpd
+
+Start the service immediately without rebooting:
+
+    /etc/rc.d/rc.ntpd start
+
+At this point, ntpd will synchronize time automatically on each boot.
+
+
+VERIFICATION
+
+To verify that ntpd is running:
+
+    ps aux | grep ntpd
+
+To check synchronization status:
+
+    ntpq -p
+
+Peers marked with an asterisk (*) indicate the active time source.
+
+
+NOTES ON TIMEZONE
+
+This document assumes the system timezone is already set correctly for
+Brazil (BRT). NTP synchronizes time in UTC internally; the local timezone
+is handled separately by the system.
+
+
+CONCLUSION
+
+Accurate time synchronization is essential for logging, package
+verification, and time-sensitive services.
+
+By using Slackware’s native ntpd service and regional Brazilian NTP
+servers, this configuration provides a simple, reliable, and
+maintainable solution without unnecessary complexity.
+
+
+APPENDIX: SAMPLE /etc/ntp.conf
+
+The following is a complete example configuration based on Slackware’s
+default ntp.conf, adjusted to use Brazilian NTP servers.
+
+-----------------------------------------------------------------------
+
+server 127.127.1.0
+fudge  127.127.1.0 stratum 10
+
+server a.st1.ntp.br iburst
+server b.st1.ntp.br iburst
+server c.st1.ntp.br iburst
+server d.st1.ntp.br iburst
+server gps.ntp.br iburst
+
+statsdir /var/lib/ntp/stats
+driftfile /var/lib/ntp/drift
+pidfile /var/run/ntpd.pid
+
+restrict default limited kod nomodify notrap nopeer noquery
+restrict -6 default limited kod nomodify notrap nopeer noquery
+
+restrict 127.0.0.1
+restrict ::1
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-03 05:26:54 UTC

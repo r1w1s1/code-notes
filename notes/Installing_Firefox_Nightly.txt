@@ -1,0 +1,21 @@
+PART ONE
+Download Firefox 64-bit
+
+    cd Downloads
+    wget -O firefox.tar.bz2 'https://download.mozilla.org/?product=firefox-nightly-latest-ssl&os=linux64&lang=en-US'
+
+    tar xvjf firefox.tar.bz2
+    mv firefox firefox-nightly
+    sudo mv firefox-nightly /opt
+
+PART TWO
+    vim ~/.local/share/applications/firefox-nightly.desktop
+
+    [Desktop Entry]
+    Name=Firefox Nightly
+    Comment=Web Browser
+    Exec=/opt/firefox-nightly/firefox-bin %u
+    Terminal=false
+    Type=Application
+    Icon=/opt/firefox-nightly/browser/chrome/icons/default/default128.png
+    Categories=Network;WebBrowser;
