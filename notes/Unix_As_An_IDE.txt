@@ -1,0 +1,288 @@
+IDEs, UNIX, AND THE OLD WORKFLOW THAT NEVER WENT AWAY
+
+
+OVERVIEW
+
+Every few years the Linux and Unix world rediscovers the same idea:
+combining navigation, editing, search, and shell interaction into a
+single environment.
+
+Modern IDEs and editors such as VSCode, Neovim, or heavily customized
+Vim setups provide integrated file trees, plugins, syntax engines,
+language servers, terminals, Git interfaces, fuzzy finders, and many
+other features.
+
+For many users this is useful.
+
+But for many older Unix users, system administrators, BSD users,
+Slackware users, and shell-oriented workflows, this idea is not new at
+all.
+
+Unix already solved most of these problems decades ago.
+
+The difference is that Unix solved them using many small tools instead
+of one large application.
+
+
+THE UNIX WAY
+
+Traditional Unix systems separate responsibilities.
+
+One tool edits text.
+Another searches.
+Another displays output.
+Another manages sessions.
+The shell itself becomes the navigation layer.
+
+Examples:
+
+    ls
+    cd
+    cat
+    less
+    grep
+    find
+    vi/nvi
+    tmux
+    mtm
+    ssh
+
+These tools cooperate through the shell.
+
+This model is simple, modular, and durable.
+
+If one component changes, the rest of the workflow remains intact.
+
+
+THE SHELL AS THE FILE MANAGER
+
+Modern editors often advertise integrated file trees as a major feature.
+
+Unix systems already solved navigation long ago using:
+
+    cd
+    ls
+    shell completion
+    wildcards
+    find
+
+For many Unix users, the shell itself is the file manager.
+
+The workflow becomes:
+
+    cd project
+    ls
+    less README
+    nvi script.sh
+
+Simple.
+Fast.
+Predictable.
+
+Many experienced users eventually discover that they rarely need a
+separate graphical file browser or integrated IDE sidebar.
+
+The shell already provides direct access to the filesystem.
+
+
+READERS VS EDITORS
+
+One old Unix lesson is that viewing a file and editing a file are not
+the same activity.
+
+Many newer users open everything directly inside Vim or another editor.
+Older Unix users often separate these actions:
+
+    less file.txt
+    cat config.conf
+    grep keyword file
+
+and only then:
+
+    vi file
+
+This distinction reduces mental overhead.
+
+Opening an editor suggests modification.
+Opening less suggests inspection.
+
+This separation remains surprisingly efficient.
+
+
+TMUX, SCREEN, AND SESSION-ORIENTED WORK
+
+One important part of the traditional Unix workflow is the terminal
+multiplexer.
+
+Tools such as:
+
+    screen
+    tmux
+    mtm
+
+allow the shell environment itself to become persistent.
+
+Instead of the editor managing projects, tabs, workspaces, and terminal
+panels, the terminal multiplexer manages sessions while the editor
+remains small and focused.
+
+This creates a different model from modern IDEs:
+
+    tmux manages windows and sessions
+    shell manages commands and navigation
+    less/cat inspect files
+    nvi edits text
+
+Each tool stays relatively small and specialized.
+
+This model also works naturally over SSH and remote systems, which is
+one reason it remains common among Unix and infrastructure users.
+
+
+THE EDITOR AS A TOOL
+
+Historically, vi was often used as a text editor and not as a complete
+workspace.
+
+The workflow was frequently:
+
+    find file
+    open file
+    edit
+    save
+    exit
+
+The shell remained the center of the environment.
+
+This differs from the modern IDE model where the editor becomes the
+entire workspace:
+
+    project tree
+    plugin manager
+    debugger
+    Git interface
+    language server
+    integrated terminal
+    AI assistant
+    workspace state
+
+For some developers this is extremely productive.
+
+For others it introduces complexity, maintenance, distraction, and a
+constant need for configuration.
+
+
+WHY SOME USERS RETURN TO SMALL TOOLS
+
+Many long-time Vim users eventually discover that they spend more time
+configuring the editor than editing text.
+
+Plugins accumulate.
+Configuration grows.
+Startup slows.
+The editor becomes a hobby itself.
+
+This is not necessarily bad.
+Some people enjoy building editor environments.
+
+But others eventually prefer:
+
+    stability
+    simplicity
+    fast startup
+    low memory usage
+    fewer dependencies
+    fewer moving parts
+    more focus
+
+This is one reason why editors such as nvi still appeal to some users.
+
+
+NVI AND THE BSD TRADITION
+
+nvi remains close to the historical BSD vi lineage.
+
+It is small, stable, predictable, and conservative.
+
+It does not try to become an IDE.
+
+BSD systems used nvi as the default vi implementation for many years.
+Even today its philosophy still reflects the old Unix model:
+
+    edit text efficiently
+    avoid unnecessary complexity
+    remain stable for decades
+
+For users working mostly with:
+
+    shell scripts
+    YAML
+    configuration files
+    infrastructure code
+    remote systems
+    documentation
+
+this remains entirely practical.
+
+
+BASH, COREUTILS, AND NVI AS AN IDE
+
+Modern development environments often centralize every activity into a
+single graphical application.
+
+The traditional Unix model distributes these activities across the
+system itself.
+
+In practice, many Unix users already work inside a complete environment
+formed by:
+
+    bash
+    coreutils
+    less
+    grep
+    find
+    tmux
+    nvi
+
+The shell becomes the workspace.
+The terminal becomes the session manager.
+The editor edits text.
+The rest of the operating system provides the surrounding tools.
+
+For some users this feels lighter, calmer, and more focused than modern
+IDE workflows.
+
+
+RELATED DOCUMENTS
+
+The workflow described in this document connects naturally with:
+
+    USING NVI AS A MINIMAL AND FAST TEXT EDITOR
+      https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/NVI_Editor_Guide.txt
+   
+    MY MTM SETUP
+      https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/My_MTM_Setup.txt
+
+These documents describe the editor and terminal workflow used
+alongside the shell-centered Unix approach discussed here.
+
+
+CONCLUSION
+
+IDEs solve real problems.
+Large projects often benefit from indexing, language servers,
+integrated debugging, and deep code analysis.
+
+But Unix already provided another answer long ago:
+
+    many small tools cooperating together
+
+For some users this older model still feels faster, calmer, and easier
+to maintain.
+
+The goal is not nostalgia.
+The goal is choosing tools that disappear into the background and allow
+work to happen.
+
+Sometimes a shell, a file manager, less, and a small vi clone are still
+enough.
