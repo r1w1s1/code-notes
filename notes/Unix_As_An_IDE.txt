@@ -1,5 +1,18 @@
 IDEs, UNIX, AND THE OLD WORKFLOW THAT NEVER WENT AWAY
 
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| Unix already solved many "IDE problems" decades ago using small  |
+| cooperating tools instead of one large application.              |
+|                                                                  |
+| bash + coreutils + less + tmux + nvi already form a complete     |
+| and focused development environment for many Unix workflows.     |
+|                                                                  |
+| The shell becomes the workspace, the terminal manages sessions,  |
+| and the editor remains small and predictable.                    |
++------------------------------------------------------------------+
+
 
 OVERVIEW
 
