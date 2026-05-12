@@ -1,0 +1,292 @@
+WINDOW MANAGER AGNOSTIC WORKFLOWS
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| A desktop workflow does not need to be tightly coupled to a      |
+| specific window manager.                                         |
+|                                                                  |
+| By separating keybindings, launchers, and helper scripts from    |
+| the WM itself, it becomes possible to switch between dwm,        |
+| progman, cwm, fvwm, or other WMs while preserving the same       |
+| keyboard workflow and muscle memory.                             |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+Many lightweight window managers provide their own systems for:
+
+    - keybindings
+    - menus
+    - launchers
+    - desktop actions
+
+Historically this made sense.
+
+Older systems such as MWM and FVWM often acted as complete desktop
+environments, containing large amounts of functionality directly inside
+the window manager itself.
+
+Modern minimalist workflows often take a different approach.
+
+Instead of embedding every behavior inside the WM, responsibilities are
+separated into smaller independent components.
+
+
+THE BASIC IDEA
+
+The workflow can be divided into layers:
+
+    sxhkd        -> keyboard shortcuts
+    dmenu        -> launcher/menu
+    shell script -> system actions
+    WM           -> window management only
+
+In this model, the window manager focuses primarily on:
+
+    - focus
+    - placement
+    - layouts
+    - floating behavior
+    - window rules
+
+while other components remain external and reusable.
+
+
+WHY THIS MATTERS
+
+Window manager configurations tend to become difficult to maintain when
+they accumulate unrelated responsibilities.
+
+Examples:
+
+    - launching applications
+    - audio controls
+    - lock screen shortcuts
+    - Wi-Fi scripts
+    - power management
+    - desktop menus
+
+When these actions are embedded directly into the WM configuration,
+switching window managers often means rebuilding the entire workflow.
+
+Separating these responsibilities creates a more durable environment.
+
+
+WHAT STAYS INSIDE THE WM
+
+This approach does not require moving every keybinding out of the
+window manager.
+
+Window-management actions still belong naturally inside the WM itself.
+
+Examples:
+
+    - changing layouts
+    - focusing windows
+    - moving clients
+    - resizing
+    - switching tags/workspaces
+
+These actions are tightly coupled to the WM internals and are usually
+best kept inside the WM configuration.
+
+sxhkd is primarily used for global desktop actions that remain stable
+regardless of the active window manager.
+
+Examples:
+
+    - volume control
+    - brightness control
+    - lock screen
+    - screenshots
+    - application launchers
+    - helper scripts
+
+This creates a cleaner separation between:
+
+    desktop workflow
+    window-management behavior
+
+while preserving the strengths of the selected WM.
+
+
+SXHKD AS THE INPUT LAYER
+
+sxhkd works well as a stable keyboard layer independent from the WM.
+
+Instead of configuring shortcuts individually inside:
+
+    dwm
+    progman
+    pekwm
+    cwm
+    fvwm
+
+the shortcuts remain centralized in one place.
+
+For example:
+
+    super + space
+
+can always open the same launcher regardless of the active WM.
+
+This preserves:
+
+    - muscle memory
+    - workflow consistency
+    - configuration simplicity
+
+
+DMENU AS A STABLE INTERFACE
+
+The launcher itself also becomes independent from the WM.
+
+A small shell script combined with dmenu can provide:
+
+    - application launching
+    - scripts
+    - power actions
+    - helper tools
+
+Example actions:
+
+    browser
+    terminal
+    irc
+    mail
+    htop
+    reboot
+    shutdown
+
+Because the launcher exists outside the WM, the same menu can be reused
+across completely different desktop environments.
+
+
+SMALL DESKTOP HELPERS
+
+This separation can also extend beyond keybindings and launchers.
+
+Small independent scripts may handle:
+
+    - wallpaper management
+    - day/night themes
+    - screenshots
+    - audio controls
+    - lock screen behavior
+
+For example, a simple shell script combined with:
+
+    xsetroot
+    hsetroot
+
+can implement time-based background behavior without requiring a full
+desktop environment or large settings framework.
+
+Example implementation:
+
+    root-daynight
+    https://git.sr.ht/~r1w1s1/unix-toolbox/tree/main/item/root-daynight
+
+A small shell script that implements time-based root background
+behavior using xsetroot and hsetroot.
+
+Because these components remain independent from the WM itself, they
+can be reused across different environments with little or no change.
+
+
+THE WINDOW MANAGER BECOMES SMALLER
+
+Once launchers and keyboard handling are externalized, the WM itself
+becomes simpler.
+
+The configuration can focus mostly on:
+
+    - window rules
+    - floating behavior
+    - layouts
+    - appearance
+
+This aligns naturally with minimalist window managers such as:
+
+    dwm
+    progman
+    cwm
+    evilwm
+
+where the WM is treated primarily as a window manipulation system rather
+than a full desktop environment.
+
+
+EXAMPLE STRUCTURE
+
+A typical setup may look like:
+
+    ~/.xinitrc.common
+    ~/.xinitrc.dwm
+    ~/.xinitrc.progman
+    ~/.config/sxhkd/sxhkdrc
+    ~/.bin/menu
+
+Shared session components:
+
+    - sxhkd
+    - xautolock
+    - PipeWire
+    - keyboard configuration
+    - helper scripts
+
+remain independent from the selected WM.
+
+Switching WMs may only require changing:
+
+    exec dwm
+
+to:
+
+    exec progman
+
+
+ADVANTAGES
+
+    - preserve workflow across WMs
+    - reduce duplicated configuration
+    - smaller WM configs
+    - easier experimentation
+    - cleaner separation of concerns
+    - more portable desktop environment
+    - lower mental overhead
+
+
+CONCLUSION
+
+Historically many window managers attempted to become complete desktop
+systems.
+
+Modern minimalist workflows often move in the opposite direction:
+
+    small independent tools cooperating together
+
+The result is a desktop where the workflow itself becomes more stable
+than the window manager underneath it.
+
+The WM can change.
+
+The workflow remains.
+
+
+RELATED DOCUMENTS
+
+    WHY I USE SXHKD
+      https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Why_I_Use_sxhkd.txt
+    UNIX AS AN IDE
+      https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Unix_As_An_IDE.txt
+    MY MTM SETUP
+      https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/My_MTM_Setup.txt
+    UNDERSTANDING WAYLAND, X11, AND MINIMALISM
+      https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Understanding_Wayland_X11_and_Minimalism.txt 
+
+------------------------------------------------------------------
+
+Last Modified: 2026-05-12

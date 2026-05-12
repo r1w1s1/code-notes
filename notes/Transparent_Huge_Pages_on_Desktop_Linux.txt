@@ -1,0 +1,282 @@
+UNDERSTANDING TRANSPARENT HUGE PAGES
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| Transparent Huge Pages (THP) allows Linux to use larger memory   |
+| pages automatically in order to reduce CPU overhead and improve  |
+| memory-management efficiency.                                    |
+|                                                                  |
+| Modern desktop systems with enough RAM, zram, and NVMe storage   |
+| often work well with THP enabled.                                |
+|                                                                  |
+| The "madvise" mode is the conservative and commonly recommended  |
+| choice, while "always" is a more aggressive desktop-oriented     |
+| approach.                                                        |
++------------------------------------------------------------------+
+
+Tested on:
+    Slackware-current
+    Linux kernel 7.0.6
+
+
+OVERVIEW
+
+Transparent Huge Pages (THP) is a Linux kernel feature designed to
+improve memory-management performance by using larger memory pages when
+possible.
+
+Traditional x86_64 Linux systems normally use:
+
+    4KB pages
+
+THP allows the kernel to combine memory into larger regions:
+
+    2MB huge pages
+
+Using larger pages reduces the amount of work required for virtual
+memory translation.
+
+This can improve:
+
+    - TLB efficiency
+    - page-table usage
+    - memory-management overhead
+    - CPU efficiency
+
+The result is often small but measurable performance improvements in
+memory-heavy workloads.
+
+
+WHY HUGE PAGES HELP
+
+Modern systems constantly translate virtual memory addresses into
+physical memory addresses.
+
+The CPU uses structures such as the Translation Lookaside Buffer (TLB)
+to speed up this process.
+
+Small pages require more entries inside these structures.
+
+Larger pages allow the CPU to map larger memory regions with fewer
+entries.
+
+Very simply:
+
+    512 normal 4KB pages
+        becomes
+    one 2MB huge page
+
+This reduces overhead inside both the CPU and the kernel memory manager.
+
+Applications that frequently allocate large amounts of memory may
+benefit from this behavior.
+
+
+COMMON WORKLOADS THAT BENEFIT
+
+Transparent Huge Pages may help workloads such as:
+
+    Firefox
+    Chromium
+    virtual machines
+    databases
+    JVM applications
+    memory-heavy desktop applications
+
+Modern browsers are particularly memory intensive because they use:
+
+    multiple processes
+    shared memory
+    JIT compilers
+    sandboxing
+    GPU acceleration
+
+Systems running many browser tabs may naturally end up using THP.
+
+
+CHECKING THE CURRENT MODE
+
+The current THP mode can be checked using:
+
+    cat /sys/kernel/mm/transparent_hugepage/enabled
+
+Example:
+
+    [always] madvise never
+
+The value inside [] is the active mode.
+
+
+THP MODES
+
+Linux provides three main THP modes.
+
+
+always
+
+    [always] madvise never
+
+The kernel aggressively attempts to use huge pages whenever possible.
+
+This mode favors performance and may increase huge-page usage across
+desktop applications automatically.
+
+Modern desktop-oriented distributions sometimes prefer this approach,
+especially on systems with:
+
+    enough RAM
+    NVMe storage
+    zram
+    modern CPUs
+
+Possible advantages:
+
+    improved TLB efficiency
+    lower CPU overhead
+    better browser behavior in some workloads
+
+Possible disadvantages:
+
+    more aggressive memory compaction
+    occasional latency spikes under pressure
+    slightly higher memory overhead
+
+
+madvise
+
+    always [madvise] never
+
+Applications explicitly request huge pages using the madvise() system
+call.
+
+This mode is generally considered the balanced and conservative choice.
+
+Applications that are aware of THP may still benefit, while the kernel
+avoids aggressively promoting memory everywhere.
+
+Many enterprise and server-oriented distributions prefer this mode.
+
+
+never
+
+    always madvise [never]
+
+Completely disables Transparent Huge Pages.
+
+Years ago some database vendors recommended disabling THP because older
+kernels sometimes produced latency spikes and memory-management issues.
+
+Modern Linux kernels handle THP significantly better than older
+generations, so disabling THP entirely is less common on modern desktop
+systems.
+
+Today this mode is mostly useful for:
+
+    troubleshooting
+    very specific low-latency workloads
+    compatibility testing
+
+
+MONITORING THP USAGE
+
+Huge-page usage can be observed using:
+
+    grep -i huge /proc/meminfo
+
+Useful fields include:
+
+    AnonHugePages
+        Huge pages used for anonymous memory.
+
+    ShmemHugePages
+        Huge pages used for shared memory and tmpfs.
+
+Modern browsers often increase:
+
+    ShmemHugePages
+
+because of their heavy shared-memory usage.
+
+Live monitoring can be performed with:
+
+    watch -n1 'grep -E "AnonHugePages|ShmemHugePages" /proc/meminfo'
+
+
+SLACKWARE CONFIGURATION
+
+Transparent Huge Pages is controlled through sysfs:
+
+    /sys/kernel/mm/transparent_hugepage/enabled
+
+This is not a normal sysctl parameter.
+
+Because of this, the traditional Slackware approach is simply placing
+the desired configuration inside:
+
+    /etc/rc.d/rc.local
+
+Example:
+
+    # Enable aggressive Transparent Huge Pages (THP) for desktop
+    # workloads such as Firefox, YouTube, and browser-heavy usage.
+    echo always > \
+        /sys/kernel/mm/transparent_hugepage/enabled
+
+Make sure rc.local remains executable:
+
+    chmod +x /etc/rc.d/rc.local
+
+
+PERSONAL DESKTOP NOTES
+
+Current desktop environment:
+
+    Slackware
+    dwm
+    Firefox with many tabs
+    YouTube
+    zram enabled
+    NVMe storage
+
+Current selected mode:
+
+    always
+
+Modern systems with enough RAM and compressed swap generally tolerate
+THP much better than older Linux systems.
+
+For browser-heavy desktop usage, the more aggressive THP behavior may
+provide slightly better memory-management efficiency with minimal
+downsides on modern hardware.
+
+Observed behavior during testing included:
+
+    increasing AnonHugePages usage
+    increasing ShmemHugePages usage
+    no observed swap usage
+    stable desktop responsiveness
+    low I/O wait during normal usage
+
+
+CONCLUSION
+
+Transparent Huge Pages is one of those Linux features that quietly works
+in the background most of the time.
+
+The idea itself is simple:
+
+    fewer larger pages
+        instead of
+    many smaller pages
+
+Modern kernels continue improving THP behavior, memory compaction, and
+large-page handling.
+
+For many desktop users today, especially on systems with modern storage,
+zram, and enough RAM, leaving THP enabled is usually a reasonable and
+practical choice.
+
+------------------------------------------------------------------
+
+Last Modified: 2026-05-12
