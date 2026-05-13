@@ -44,8 +44,8 @@ This can improve:
     - memory-management overhead
     - CPU efficiency
 
-The result is often small but measurable performance improvements in
-memory-heavy workloads.
+The result is often small but measurable reductions in memory-
+management overhead for memory-heavy workloads.
 
 
 WHY HUGE PAGES HELP
@@ -187,20 +187,51 @@ Huge-page usage can be observed using:
 Useful fields include:
 
     AnonHugePages
-        Huge pages used for anonymous memory.
+        Huge pages used for anonymous process memory such as:
+
+            process heaps
+            allocators
+            JIT memory
+            browser renderer memory
+
+        This value often increases with memory-heavy applications
+        such as browsers, virtual machines, and databases.
 
     ShmemHugePages
         Huge pages used for shared memory and tmpfs.
 
-Modern browsers often increase:
+        Modern browsers frequently increase this value because of:
 
-    ShmemHugePages
-
-because of their heavy shared-memory usage.
+            renderer processes
+            GPU shared memory
+            sandbox IPC
+            multimedia buffers
 
 Live monitoring can be performed with:
 
-    watch -n1 'grep -E "AnonHugePages|ShmemHugePages" /proc/meminfo'
+    watch -n1 'grep -E "AnonHugePages|ShmemHugePages" \
+        /proc/meminfo'
+
+
+OBSERVING DESKTOP HUGE PAGE USAGE
+
+Modern desktop applications such as Firefox, Chromium, Electron,
+YouTube playback, and GPU-accelerated applications may naturally
+increase huge-page usage.
+
+Example conversion to MB:
+
+    grep -E "AnonHugePages|ShmemHugePages" \
+        /proc/meminfo | \
+        awk '{ printf "%-18s %.1f MB\n", $1, $2/1024 }'
+
+Example during Firefox + YouTube usage:
+
+    AnonHugePages:   240.0 MB
+    ShmemHugePages:  420.0 MB
+
+Values naturally vary depending on workload, browser tabs,
+video playback, and system uptime.
 
 
 SLACKWARE CONFIGURATION
@@ -220,8 +251,7 @@ Example:
 
     # Enable aggressive Transparent Huge Pages (THP) for desktop
     # workloads such as Firefox, YouTube, and browser-heavy usage.
-    echo always > \
-        /sys/kernel/mm/transparent_hugepage/enabled
+    echo always > /sys/kernel/mm/transparent_hugepage/enabled
 
 Make sure rc.local remains executable:
 
@@ -232,12 +262,14 @@ PERSONAL DESKTOP NOTES
 
 Current desktop environment:
 
-    Slackware
-    dwm
-    Firefox with many tabs
-    YouTube
+    Slackware-current
+    Linux kernel 7.0.6
+    ThinkPad T14 Gen 2
+    dwm + st + Firefox
+    YouTube and browser-heavy workloads
     zram enabled
     NVMe storage
+    40GB RAM
 
 Current selected mode:
 
@@ -257,6 +289,13 @@ Observed behavior during testing included:
     no observed swap usage
     stable desktop responsiveness
     low I/O wait during normal usage
+
+On modern systems such as a ThinkPad T14 Gen 2 with enough RAM,
+NVMe storage, and zram, the more aggressive "always" mode appears
+to behave reasonably well for desktop workloads.
+
+Older systems with less memory, slower storage, or older CPUs may
+still benefit from the more conservative "madvise" mode.
 
 
 CONCLUSION
@@ -279,4 +318,4 @@ practical choice.
 
 ------------------------------------------------------------------
 
-Last Modified: 2026-05-12
+Last Modified: 2026-05-13
