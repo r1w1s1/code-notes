@@ -298,6 +298,38 @@ Older systems with less memory, slower storage, or older CPUs may
 still benefit from the more conservative "madvise" mode.
 
 
+SIMPLE THP MONITORING SCRIPT
+
+A small shell script can be useful for quickly observing current
+Transparent Huge Page usage on desktop systems.
+
+Example:
+
+    #!/bin/sh
+
+    THP="/sys/kernel/mm/transparent_hugepage"
+
+    mode="$(cat $THP/enabled 2>/dev/null)"
+
+    anon="$(awk '/AnonHugePages/ {
+        print int($2/1024) " MB"
+    }' /proc/meminfo)"
+
+    shmem="$(awk '/ShmemHugePages/ {
+        print int($2/1024) " MB"
+    }' /proc/meminfo)"
+
+    echo "THP mode        : $mode"
+    echo "AnonHugePages   : $anon"
+    echo "ShmemHugePages  : $shmem"
+
+Example output:
+
+    THP mode        : [always] madvise never
+    AnonHugePages   : 338 MB
+    ShmemHugePages  : 378 MB
+
+
 CONCLUSION
 
 Transparent Huge Pages is one of those Linux features that quietly works
