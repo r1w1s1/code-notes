@@ -1,29 +1,37 @@
-#!/bin/bash
-# Check if a file name is provided
-if [ -z "$1" ]; then
-  echo "Usage: $0 NAME_OF_DOCUMENT.txt"
-  exit 1
+#!/bin/sh
+
+set -eu
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 FILE"
+    exit 1
 fi
 
-FILE_PATH="$1"
+file="$1"
 
-# Check if the file exists
-if [ ! -f "$FILE_PATH" ]; then
-  echo "Error: File '$FILE_PATH' does not exist."
-  exit 1
+if [ ! -f "$file" ]; then
+    echo "Error: file not found: $file"
+    exit 1
 fi
 
-# Get current UTC date (date only, no time)
-CURRENT_DATE=$(date -u +"%Y-%m-%d")
-LAST_MODIFIED_LINE="Last Modified: $CURRENT_DATE"
+timestamp=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
 
-# Remove existing "Last Modified:" line and any blank lines before it at end of file
-sed -i '/^Last Modified:/d' "$FILE_PATH"
+tmp=$(mktemp)
 
-# Strip trailing blank lines from end of file
-sed -i -e :a -e '/^\s*$/{$d;N;ba}' "$FILE_PATH"
+# remove old Last Modified lines
+grep -v '^Last Modified:' "$file" > "$tmp"
 
-# Append 2 blank lines + Last Modified line
-printf "\n\n%s\n" "$LAST_MODIFIED_LINE" >> "$FILE_PATH"
+# remove trailing blank lines
+while [ -s "$tmp" ] && tail -n 1 "$tmp" | grep -q '^[[:space:]]*$'; do
+    sed -i '$d' "$tmp"
+done
 
-echo "Last Modified date updated in '$FILE_PATH': $CURRENT_DATE"
+# append footer
+{
+    echo
+    echo "Last Modified: $timestamp"
+} >> "$tmp"
+
+mv "$tmp" "$file"
+
+echo "Updated: $file"
