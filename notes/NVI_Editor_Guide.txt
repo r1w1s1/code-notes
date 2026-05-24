@@ -255,6 +255,38 @@ nvi is ideal for:
     - terminal multiplexer environments (tmux, mtm, GNU Screen)
 
 
+NVI ACROSS UNIX SYSTEMS
+
+nvi remains widely present across BSD and Unix-like systems.
+
+FreeBSD:
+    base system vi implementation
+    https://man.freebsd.org/cgi/man.cgi?query=nvi
+
+NetBSD:
+    ships nvi in base
+    https://man.netbsd.org/vi.1
+
+Slackware:
+    adopted nvi in Slackware-current in 2020, replacing
+    Elvis as the default /usr/bin/vi provider
+    http://www.slackware.com/
+
+Debian:
+    provides nvi as an optional package in the official
+    repositories
+    https://packages.debian.org/nvi
+
+Void Linux:
+    provides nvi as an optional package
+    https://github.com/void-linux/void-packages/tree/master/srcpkgs/nvi
+
+CRUX:
+    provides nvi 1.79 through the ports system rather than
+    as part of the main base distribution
+    https://crux.nu/ports/
+
+
 CONCLUSION
 
 nvi follows the original Unix philosophy: simple, fast, and reliable.
@@ -301,4 +333,4 @@ Historical documentation and background can be found at:
 
 ------------------------------------------------------------------
 
-Last Modified: 2026-05-08 00:00:00 UTC
+Last Modified: 2026-05-24 16:42:08 UTC
