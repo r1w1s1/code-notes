@@ -1,4 +1,4 @@
-Nerdctl and Containerd on Slackware -current
+NERDCTL AND CONTAINERD ON SLACKWARE-CURRENT
 ============================================
 
 1. Overview  

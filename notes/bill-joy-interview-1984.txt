@@ -1,3 +1,5 @@
+INTERVIEW WITH BILL JOY (UNIX REVIEW, 1984)
+
 The following interview is taken from the August 1984 issue of
 Unix Review magazine (which briefly changed its name to
 Performance Computing, but then dropped out of print and later
@@ -240,3 +242,8 @@ Wrinkles are in, you know.
 
 
 END OF INTERVIEW
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-05-09 00:00:00 UTC

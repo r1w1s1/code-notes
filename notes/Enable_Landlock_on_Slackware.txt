@@ -1,3 +1,5 @@
+ENABLING LANDLOCK ON SLACKWARE
+
 This document explains how to enable Landlock on Slackware-current
 when using kernel 6.14. Landlock is a security module that provides
 application sandboxing capabilities.

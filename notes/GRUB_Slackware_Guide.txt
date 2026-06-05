@@ -1,4 +1,4 @@
-Using GRUB on Slackware-current (also applicable to Slackware 15.0)
+USING GRUB ON SLACKWARE-CURRENT (ALSO 15.0)
 
 This guide applies to Slackware-current systems while LILO is still the
 default installer bootloader. GRUB setup remains an explicit, manual
@@ -116,3 +116,8 @@ Example:
 This guide covers both UEFI and Legacy BIOS setups for configuring GRUB
 on Slackware-current (15.0+). Ensure you follow the correct instructions
 based on your system firmware.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-03 00:00:00 UTC

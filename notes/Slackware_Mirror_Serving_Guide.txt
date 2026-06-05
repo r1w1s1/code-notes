@@ -1,4 +1,4 @@
-Serving a Slackware Mirror
+SERVING A SLACKWARE MIRROR
 ==========================
 
 Overview:
@@ -195,3 +195,8 @@ Conclusion:
 Apache provides a stable, well-supported solution for serving
 a Slackware mirror. For static-file workloads on a home LAN or
 public-facing deployment, the configuration above is sufficient.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-03 00:00:00 UTC

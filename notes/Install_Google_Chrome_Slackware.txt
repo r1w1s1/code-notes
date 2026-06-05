@@ -1,4 +1,4 @@
-How to install Google-Chrome in Slackware?
+INSTALLING GOOGLE CHROME ON SLACKWARE
 ------------------------------------------
 
 1. Download the Slackbuild

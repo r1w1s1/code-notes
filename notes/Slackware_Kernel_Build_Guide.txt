@@ -1,4 +1,4 @@
-Using Slackware Testing Kernel Tree to Build a New Kernel Version
+BUILDING A NEW KERNEL FROM THE SLACKWARE TESTING TREE
 
 This guide uses Slackware's testing/source kernel tree as a base
 and upgrades it to a newer upstream version while preserving
@@ -134,3 +134,8 @@ Notes
 
 This workflow mirrors Slackware's source/k structure
 while allowing independent upstream kernel tracking.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-03 00:00:00 UTC

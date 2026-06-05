@@ -1,4 +1,4 @@
-Creating a Local Mirror of Slackware64-current
+CREATING A LOCAL MIRROR OF SLACKWARE64-CURRENT
 ==============================================
 
 Overview:
@@ -81,3 +81,7 @@ share your mirror across your internal network using HTTP, see:
 These documents explain how to serve the mirror and configure slackpkg
 using a LAN-accessible URL.
 
+
+------------------------------------------------------------------
+
+Last Modified: 2026-01-03 00:00:00 UTC
