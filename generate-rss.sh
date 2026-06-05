@@ -1,22 +1,40 @@
 #!/bin/sh
 # generate-rss.sh - build an RSS 2.0 feed from notes/*.txt
+#
 #   title = first line of each note
 #   date  = the "Last Modified:" footer
-#   link  = $BASE_URL/notes/<file>   (canonical permalink = the filename)
-# Run from the repo root:  sh generate-rss.sh > rss.xml
+#   link  = $BASE_URL/notes/<file>
+#
+# Run from the repo root:
+#   sh generate-rss.sh > rss.xml
 
 set -eu
 
-# Configuração apontando para o repo.or.cz usando blob_plain
+#
+# Configuration
+#
+
 BASE_URL="https://repo.or.cz/code-notes.git/blob_plain/HEAD:"
 FEED_LINK="https://repo.or.cz/code-notes.git"
 FEED_TITLE="code-notes"
 FEED_DESC="Concise technical notes on Slackware, Unix, and minimal tooling."
-NOTES=notes
 
-esc() { sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'; }   # XML-escape element text
+NOTES="notes"
+
+#
+# Helpers
+#
+
+esc()
+{
+    sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'
+}
 
 now=$(date -u +"%a, %d %b %Y %H:%M:%S +0000")
+
+#
+# Feed header
+#
 
 cat <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -29,25 +47,46 @@ cat <<EOF
 <atom:link href="${BASE_URL}/rss.xml" rel="self" type="application/rss+xml" />
 EOF
 
+#
+# Collect notes and sort by Last Modified date
+#
+
 for f in "$NOTES"/*.txt; do
     [ -f "$f" ] || continue
-    d=$(grep '^Last Modified:' "$f" | tail -n 1 \
-        | sed 's/^Last Modified:[[:space:]]*//; s/ UTC$//')
-    [ -n "$d" ] || continue              # skip notes that still have no date
+
+    d=$(grep '^Last Modified:' "$f" | tail -n 1 |
+        sed 's/^Last Modified:[[:space:]]*//; s/ UTC$//')
+
+    [ -n "$d" ] || continue
+
     printf '%s\t%s\n' "$d" "$f"
-done \
-| sort -r \
-| while IFS="$(printf '\t')" read -r d f; do
+done |
+sort -r |
+while IFS="$(printf '\t')" read -r d f; do
+
     title=$(head -n 1 "$f" | esc)
     url="$BASE_URL/$f"
-    pub=$(date -u -d "$d UTC" +"%a, %d %b %Y %H:%M:%S +0000" 2>/dev/null || echo "$now")
-    # excerpt: drop title, box-drawing (+ |), rules (--- ===), footer, blanks
-    excerpt=$(sed '1d' "$f" \
-        | grep -Ev '^[[:space:]]*[|+]' \
-        | grep -Ev '^[[:space:]]*[-=]{3,}[[:space:]]*$' \
-        | grep -v '^Last Modified:' \
-        | sed '/^[[:space:]]*$/d' \
-        | head -n 3 | tr '\n' ' ' | sed 's/[[:space:]]\{2,\}/ /g' | cut -c1-280)
+
+    pub=$(date -u -d "$d UTC" \
+        +"%a, %d %b %Y %H:%M:%S +0000" 2>/dev/null ||
+        echo "$now")
+
+    # excerpt:
+    #   - drop title
+    #   - drop box drawing lines (+ |)
+    #   - drop separators (--- ===)
+    #   - drop footer
+    #   - drop blank lines
+    excerpt=$(sed '1d' "$f" |
+        grep -Ev '^[[:space:]]*[|+]' |
+        grep -Ev '^[[:space:]]*[-=]{3,}[[:space:]]*$' |
+        grep -v '^Last Modified:' |
+        sed '/^[[:space:]]*$/d' |
+        head -n 3 |
+        tr '\n' ' ' |
+        sed 's/[[:space:]]\{2,\}/ /g' |
+        cut -c1-280)
+
     cat <<EOF
 <item>
 <title>$title</title>
@@ -57,7 +96,12 @@ done \
 <description><![CDATA[$excerpt]]></description>
 </item>
 EOF
+
 done
+
+#
+# Feed footer
+#
 
 cat <<EOF
 </channel>
