@@ -7,8 +7,9 @@
 
 set -eu
 
-BASE_URL="https://git.sr.ht/~r1w1s1/code-notes/blob/main"
-FEED_LINK="https://git.sr.ht/~r1w1s1/code-notes"
+# Configuração apontando para o repo.or.cz usando blob_plain
+BASE_URL="https://repo.or.cz/code-notes.git/blob_plain/HEAD:"
+FEED_LINK="https://repo.or.cz/code-notes.git"
 FEED_TITLE="code-notes"
 FEED_DESC="Concise technical notes on Slackware, Unix, and minimal tooling."
 NOTES=notes
@@ -19,34 +20,35 @@ now=$(date -u +"%a, %d %b %Y %H:%M:%S +0000")
 
 cat <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
 <title>$FEED_TITLE</title>
 <link>$FEED_LINK</link>
 <description>$FEED_DESC</description>
 <lastBuildDate>$now</lastBuildDate>
+<atom:link href="${BASE_URL}/rss.xml" rel="self" type="application/rss+xml" />
 EOF
 
 for f in "$NOTES"/*.txt; do
-	[ -f "$f" ] || continue
-	d=$(grep '^Last Modified:' "$f" | tail -n 1 \
-		| sed 's/^Last Modified:[[:space:]]*//; s/ UTC$//')
-	[ -n "$d" ] || continue              # skip notes that still have no date
-	printf '%s\t%s\n' "$d" "$f"
+    [ -f "$f" ] || continue
+    d=$(grep '^Last Modified:' "$f" | tail -n 1 \
+        | sed 's/^Last Modified:[[:space:]]*//; s/ UTC$//')
+    [ -n "$d" ] || continue              # skip notes that still have no date
+    printf '%s\t%s\n' "$d" "$f"
 done \
 | sort -r \
 | while IFS="$(printf '\t')" read -r d f; do
-	title=$(head -n 1 "$f" | esc)
-	url="$BASE_URL/$f"
-	pub=$(date -u -d "$d UTC" +"%a, %d %b %Y %H:%M:%S +0000" 2>/dev/null || echo "$now")
-	# excerpt: drop title, box-drawing (+ |), rules (--- ===), footer, blanks
-	excerpt=$(sed '1d' "$f" \
-		| grep -Ev '^[[:space:]]*[|+]' \
-		| grep -Ev '^[[:space:]]*[-=]{3,}[[:space:]]*$' \
-		| grep -v '^Last Modified:' \
-		| sed '/^[[:space:]]*$/d' \
-		| head -n 3 | tr '\n' ' ' | sed 's/[[:space:]]\{2,\}/ /g' | cut -c1-280)
-	cat <<EOF
+    title=$(head -n 1 "$f" | esc)
+    url="$BASE_URL/$f"
+    pub=$(date -u -d "$d UTC" +"%a, %d %b %Y %H:%M:%S +0000" 2>/dev/null || echo "$now")
+    # excerpt: drop title, box-drawing (+ |), rules (--- ===), footer, blanks
+    excerpt=$(sed '1d' "$f" \
+        | grep -Ev '^[[:space:]]*[|+]' \
+        | grep -Ev '^[[:space:]]*[-=]{3,}[[:space:]]*$' \
+        | grep -v '^Last Modified:' \
+        | sed '/^[[:space:]]*$/d' \
+        | head -n 3 | tr '\n' ' ' | sed 's/[[:space:]]\{2,\}/ /g' | cut -c1-280)
+    cat <<EOF
 <item>
 <title>$title</title>
 <link>$url</link>
