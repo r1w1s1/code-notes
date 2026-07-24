@@ -29,7 +29,7 @@ SIMPLICITY AS A CORE PRINCIPLE
 Slackware values internal simplicity over convenience.
 
 Configuration files are plain text.
-System behavior is explicit rather than abstracted.
+System behavior is explicit rather than heavily abstracted.
 There are few hidden layers between the administrator and the system.
 
 This does not necessarily make Slackware easier to use, but it makes the
@@ -53,8 +53,9 @@ NO AUTOMATIC DEPENDENCY RESOLUTION
 
 Slackware does not use automatic dependency resolution.
 
-Instead, the base system is installed as a complete set, ensuring that
-dependencies are satisfied by design. Third-party software is built
+Instead, the official full installation is intended to provide a complete
+set, so dependencies within the base system are satisfied by design.
+Third-party software is built
 using SlackBuild scripts, which make dependencies explicit and visible.
 
 This approach avoids the complexity and failure modes commonly found in
@@ -79,7 +80,8 @@ VANILLA UPSTREAM SOFTWARE
 
 Slackware ships software that is as close to upstream as possible.
 
-Patches are minimal and applied only when necessary.
+Patches are minimal and applied only when necessary. When patches are
+necessary, they are generally kept small and easy to inspect.
 Documentation, headers, and examples are preserved.
 Behavior matches upstream expectations.
 
@@ -100,8 +102,8 @@ This model favors learning, control, and long-term system mastery.
 
 NO SYSTEMD
 
-Slackware deliberately avoids systemd and retains traditional init
-systems.
+Slackware deliberately avoids systemd and retains traditional BSD-style
+initialization scripts.
 
 This choice aligns with Slackware’s preference for simple, auditable
 startup mechanisms and avoids tightly coupled management layers.
@@ -143,4 +145,4 @@ coherent and dependable system.
 
 ------------------------------------------------------------------
 
-Last Modified: 2026-01-03 05:54:29 UTC
+Last Modified: 2026-07-24 05:54:29 UTC
