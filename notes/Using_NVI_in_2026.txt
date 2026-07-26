@@ -83,7 +83,12 @@ REFERENCES
 Inspired by a comment by chongli on Hacker News (2017-03-26):
 https://news.ycombinator.com/item?id=13959104
 
+Bob Beck explains why vi should remain vi, while users who want Vim
+should invoke vim explicitly. He also highlights the value of
+consistent traditional vi behavior across Unix systems:
+https://marc.info/?l=openbsd-misc&m=115820462402673
+
 
 ------------------------------------------------------------------
 
-Last Modified: 2026-03-27 22:27:59 UTC
+Last Modified: 2026-07-26 01:45:45 UTC
