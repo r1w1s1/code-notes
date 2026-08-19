@@ -1,0 +1,121 @@
+X11 SERVERFLAGS: DONTZAP AND DONTVTSWITCH
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| DontZap prevents Ctrl+Alt+Backspace from terminating X.          |
+| DontVTSwitch prevents leaving X through Ctrl+Alt+Fn, but also    |
+| removes an important recovery path. For most personal systems,   |
+| DontZap alone is the more balanced choice.                       |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+Xorg provides ServerFlags options that change how the X server
+responds to keyboard shortcuts. These are defense-in-depth measures,
+not a complete solution for physical-access or screen-lock security.
+
+They are especially relevant when X is started manually with startx
+or xinit:
+
+    login on tty1
+        |
+        +-- startx / xinit
+              |
+              +-- X
+                   |
+                   +-- window manager
+                   +-- xscreensaver [LOCKED]
+
+If X is terminated while locked, the user may return to the already
+authenticated shell that launched startx or xinit.
+
+
+DONTZAP
+
+    Option "DontZap" "True"
+
+This prevents Ctrl+Alt+Backspace from terminating, or "zapping", the
+X server. It is a useful low-cost defense-in-depth measure for
+manually started graphical sessions and complements screen lockers
+such as xscreensaver.
+
+A practical configuration is:
+
+    /etc/X11/xorg.conf.d/10-serverflags.conf
+
+    Section "ServerFlags"
+        # Prevent Ctrl+Alt+Backspace from terminating the X server.
+        # VT switching (Ctrl+Alt+Fn) remains available for recovery.
+        Option "DontZap" "True"
+    EndSection
+
+
+DONTVTSWITCH
+
+    Option "DontVTSwitch" "True"
+
+This prevents switching away from X to another virtual terminal with
+Ctrl+Alt+F1, Ctrl+Alt+F2, and similar keys. It can be useful for a
+kiosk, public terminal, or a system with a stricter physical-access
+threat model.
+
+The trade-off is important. VT switching is a valuable recovery path:
+
+    Ctrl+Alt+F2
+        |
+        +-- login
+        |
+        +-- inspect processes/logs
+        |
+        +-- kill the offending process
+        |
+        +-- return to X
+
+If X, the window manager, Firefox, or the graphics driver hangs,
+another VT may still work. DontVTSwitch intentionally removes this
+option. It is not inherently better or more secure; it is a stricter
+physical-access choice with a usability and recovery cost.
+
+Authenticated shells left running on other VTs can also be reached
+when VT switching is allowed, so this should be part of the threat
+model.
+
+
+PRACTICAL RECOMMENDATION
+
+For a normal personal Unix/Linux workstation using startx or xinit,
+DontZap alone is a reasonable compromise:
+
+    Section "ServerFlags"
+        Option "DontZap" "True"
+    EndSection
+
+This blocks the direct X termination shortcut while preserving
+Ctrl+Alt+Fn as an emergency recovery mechanism.
+
+For a kiosk, public terminal, or system with stricter physical-access
+requirements, both options may be appropriate:
+
+    Section "ServerFlags"
+        Option "DontZap"      "True"
+        Option "DontVTSwitch" "True"
+    EndSection
+
+The second configuration deliberately gives up normal VT recovery.
+Neither option protects against every physical-access scenario,
+suspend/resume issue, power cycle, boot-menu access, or other way of
+interacting with the machine.
+
+
+CONCLUSION
+
+DontZap is usually the balanced choice. DontVTSwitch may be justified
+when preventing access to other VTs matters more than convenient
+recovery from a broken graphical session.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-08-19 14:27:09 UTC

@@ -10,6 +10,7 @@ set -eu
 
 OUT=README.md
 NOTES=notes
+BASE_URL=https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master
 
 cat <<'EOF' > "$OUT"
 # code-notes
@@ -43,7 +44,8 @@ done \
 | while IFS="$(printf '\t')" read -r date title file; do
 	display_date=${date%% *}
 	[ "$display_date" = "0000-00-00" ] && display_date=undated
-	printf -- '%s  <a href="%s">%s</a>\n' "$display_date" "$file" "$title"
+	printf -- '%s  <a href="%s/%s">%s</a>\n' \
+		"$display_date" "$BASE_URL" "$file" "$title"
 	printf -- '              %s\n\n' "$file"
 done >> "$OUT"
 

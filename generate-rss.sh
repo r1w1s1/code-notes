@@ -14,7 +14,7 @@ set -eu
 # Configuration
 #
 
-BASE_URL="https://raw.githubusercontent.com/r1w1s1/code-notes/master"
+BASE_URL="https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master"
 FEED_LINK="https://github.com/r1w1s1/code-notes"
 FEED_TITLE="code-notes"
 FEED_DESC="Concise technical notes on Slackware, Unix, and minimal tooling."
