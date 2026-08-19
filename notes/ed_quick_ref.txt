@@ -1,0 +1,244 @@
+USING ED AS A SMALL AND RELIABLE TEXT EDITOR
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| ed is a line-oriented Unix text editor. It works without a       |
+| screen interface and is useful for small edits, recovery work,   |
+| remote sessions, and repeatable shell transformations.           |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+ed does not display a file when it opens it. It reads the file into an
+in-memory buffer and waits for commands. Most commands operate on the
+current line, or on a range of lines written before the command.
+
+This is different from nvi's screen-oriented interface, but the command
+language will feel familiar because ed is part of the same ex/vi family.
+
+
+STARTING ED
+
+Open an existing file:
+
+    ed file.txt
+
+The number printed at startup is the number of bytes read, not the number
+of lines. Use a prompt while learning or when working interactively:
+
+    ed -p'*' file.txt
+
+Inside ed, enable detailed errors and the prompt if needed:
+
+    H       toggle verbose error messages
+    P       toggle the command prompt
+
+The default error is simply "?". Use h immediately afterward to explain
+the last error. Ctrl-C cancels the current input operation.
+
+
+THE BASIC EDITING CYCLE
+
+    a       append lines after the current line
+    i       insert lines before the current line
+    c       change (replace) selected lines
+    d       delete selected lines
+    p       print selected lines
+    n       print selected lines with line numbers
+    w       write (save) the current file
+    q       quit, warning if the buffer is modified
+    wq      write and quit
+    Q       quit and discard modifications
+
+After a, i, or c, type text normally. A line containing only a period
+returns to command mode.
+
+Minimal example for creating a file:
+
+    ed -p'*' notes.txt
+    0a
+    first line
+    second line
+    .
+    w
+    q
+
+The q command refuses to discard unsaved changes on its first use. Save
+with w, use wq, or type q a second time. Q discards immediately.
+
+
+ADDRESSES
+
+An address identifies a line. An address or range goes before the command.
+If no address is given, the command usually uses the current line.
+
+    1       line 1
+    .       current line
+    $       last line
+    0       before line 1; useful with 0a and as a move destination
+    +       one line after the current line
+    -       one line before the current line
+    +3      three lines after the current line
+    -3      three lines before the current line
+    'a      line marked with ka
+    , or %  the complete buffer when used with a command
+    ;       current line through the last line (same as .,$)
+
+Ranges include both endpoints:
+
+    1,$p       print the complete file
+    1,10n      print lines 1 through 10 with numbers
+    .,+5p      print the current line and the next five lines
+    -,+n       print one line of context on each side
+    ;p         print from the current line to the end
+
+A number by itself moves to that line and normally prints it. Use .= to
+print the current line number, and use $= to print the total number of lines.
+
+For navigation through a long file:
+
+    1z         display a screenful starting at line 1
+    z          continue scrolling
+    11z5       display five lines starting at line 11
+    1ka        mark line 1 with mark a
+    'a         return to mark a
+
+
+EDITING AND REORGANIZING
+
+    5a                 append after line 5
+    5i                 insert before line 5
+    5c                 replace line 5
+    5,8d               delete lines 5 through 8
+    5,8j               join lines 5 through 8 into one line
+    5,8m12             move lines 5 through 8 after line 12
+    5,8t12             copy lines 5 through 8 after line 12
+    u                  undo the last modifying command
+
+ed has one level of undo. Repeating u undoes the previous undo, effectively
+switching between two states. After moving or deleting lines, print the
+area again with n because later line numbers have changed. When performing
+several line-number operations, work from the bottom toward the top.
+
+
+SEARCHING
+
+A search moves the current line to the next matching line:
+
+    /pattern/           search forward
+    ?pattern?           search backward
+    //                  repeat the last forward search
+    ??                  repeat the last backward search
+    g/pattern/n         print every matching line with line numbers
+    v/pattern/n         print every non-matching line with line numbers
+
+Searches are case-sensitive. Before changing anything, use g/pattern/n to
+verify which lines match.
+
+
+SUBSTITUTION
+
+    s/old/new/           replace the first match on the current line
+    s/old/new/g          replace every match on the current line
+    1,20s/old/new/g      replace every match in lines 1 through 20
+    %s/old/new/g         replace every match in the complete buffer
+    g/pattern/d           delete every matching line
+    g/pattern/p           print every matching line
+
+Always test a pattern with g/pattern/n before running a substitution. Use
+another delimiter when the text contains slashes:
+
+    %s@/old/path@/new/path@g
+
+Common basic regular expression elements:
+
+    .       any single character
+    [abc]   one character from the class
+    [^abc]  one character not in the class
+    ^       beginning of line
+    $       end of line
+    .*      zero or more arbitrary characters
+
+Parentheses for backreferences must be escaped in basic regular expressions:
+
+    \(.*\)      capture a group
+    \1          refer to the first captured group
+
+
+FILES AND SHELL COMMANDS
+
+    f                  show the current filename
+    f new.txt          set the default filename
+    w other.txt        write the buffer to another file
+    W other.txt        append to another file
+    r other.txt        read a file after the current line
+    e other.txt        edit another file
+    E other.txt        edit another file, discarding changes without asking
+    !command           run a shell command and return to ed
+    !!                 repeat the last shell command
+    r !command          insert command output into the buffer
+    w !wc              send the buffer to a command
+
+w other.txt overwrites the destination file. When testing a transformation,
+work on a copy and inspect the result before saving.
+
+
+USEFUL REMINDERS
+
+Remove carriage returns (CR, often shown as ^M) at the end of lines from a
+file created on Windows:
+
+    printf ',s/\r$//\nw\nq\n' | ed -s file.txt
+
+Run ed non-interactively with a command script:
+
+ed -s file.txt <<'EOF'
+1,$s/foo/bar/g
+w
+q
+EOF
+
+A cautious interactive workflow:
+
+    cp file.txt file.txt.ed.bak
+    ed -p'*' file.txt
+    H
+    .,+5n
+    /text/
+    g/text/n
+    %s/old/new/g
+    1,$n
+    w
+    q
+
+The commands in the workflow are intentionally separate. Print and inspect
+the buffer before saving whenever the change is important.
+
+
+SEVEN-DAY PRACTICE
+
+    1. Create a file using a, i, c, d, p, n, w, and q.
+    2. Repeat searches with /, //, ?, and ??.
+    3. Use ranges to print, delete, and substitute blocks.
+    4. Rearrange text with m, t, and j.
+    5. Edit a small configuration file and compare it with diff.
+    6. Run a global substitution on a copy with ed -s.
+    7. Edit a README or shell script without opening a visual editor.
+
+
+REFERENCES
+
+    Michael W. Lucas, Ed Mastery: The Standard Unix Text Editor, 2018.
+    Tom Ryder, "Actually using ed", 2012:
+    https://blog.sanctum.geek.nz/actually-using-ed/
+    man ed
+
+This is a daily-use reference, not a complete manual. The best exercise is
+to keep a disposable file open and verify each operation with n before saving.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-08-16 00:00:00 UTC
