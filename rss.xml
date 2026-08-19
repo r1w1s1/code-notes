@@ -4,313 +4,313 @@
 <title>code-notes</title>
 <link>https://github.com/r1w1s1/code-notes</link>
 <description>Concise technical notes on Slackware, Unix, and minimal tooling.</description>
-<lastBuildDate>Wed, 19 Aug 2026 14:31:38 +0000</lastBuildDate>
-<atom:link href="https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/rss.xml" rel="self" type="application/rss+xml" />
+<lastBuildDate>Wed, 19 Aug 2026 19:50:12 +0000</lastBuildDate>
+<atom:link href="https://raw.githubusercontent.com/r1w1s1/code-notes/master/rss.xml" rel="self" type="application/rss+xml" />
 <item>
 <title>X11 SERVERFLAGS: DONTZAP AND DONTVTSWITCH</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/X11_ServerFlags.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/X11_ServerFlags.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/X11_ServerFlags.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/X11_ServerFlags.txt</guid>
 <pubDate>Wed, 19 Aug 2026 14:27:09 +0000</pubDate>
 <description><![CDATA[OVERVIEW Xorg provides ServerFlags options that change how the X server responds to keyboard shortcuts. These are defense-in-depth measures, ]]></description>
 </item>
 <item>
 <title>USING ED AS A SMALL AND RELIABLE TEXT EDITOR</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/ed_quick_ref.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/ed_quick_ref.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/ed_quick_ref.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/ed_quick_ref.txt</guid>
 <pubDate>Sun, 16 Aug 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW ed does not display a file when it opens it. It reads the file into an in-memory buffer and waits for commands. Most commands operate on the ]]></description>
 </item>
 <item>
 <title>OPTIONAL CLANG AND HARDENED PACKAGE BUILDS ON SLACKWARE</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Optional_Clang_Hardening_Guide.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Optional_Clang_Hardening_Guide.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Optional_Clang_Hardening_Guide.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Optional_Clang_Hardening_Guide.txt</guid>
 <pubDate>Mon, 10 Aug 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW Many Linux distributions apply security-related compiler and linker flags while building packages. Slackware generally keeps its build ]]></description>
 </item>
 <item>
 <title>USING NVI IN 2026</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Using_NVI_in_2026.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Using_NVI_in_2026.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Using_NVI_in_2026.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Using_NVI_in_2026.txt</guid>
 <pubDate>Sun, 26 Jul 2026 01:45:45 +0000</pubDate>
 <description><![CDATA[OVERVIEW There is a common assumption that modern development requires modern editors, plugins, and IDE-like features. ]]></description>
 </item>
 <item>
 <title>UNDERSTANDING SLACKWARE’S PHILOSOPHY</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Understanding_Slackware_Philosophy.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Understanding_Slackware_Philosophy.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Understanding_Slackware_Philosophy.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Understanding_Slackware_Philosophy.txt</guid>
 <pubDate>Fri, 24 Jul 2026 05:54:29 +0000</pubDate>
 <description><![CDATA[OVERVIEW Slackware is one of the oldest surviving GNU/Linux distributions. Rather than chasing trends or rapid change, Slackware has always ]]></description>
 </item>
 <item>
 <title>USING NVI AS A MINIMAL AND FAST TEXT EDITOR</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/NVI_Editor_Guide.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/NVI_Editor_Guide.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/NVI_Editor_Guide.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/NVI_Editor_Guide.txt</guid>
 <pubDate>Sun, 24 May 2026 16:42:08 +0000</pubDate>
 <description><![CDATA[OVERVIEW This document introduces the nvi text editor, a clean and efficient implementation of the original Berkeley vi written by Keith Bostic. ]]></description>
 </item>
 <item>
 <title>UNDERSTANDING TRANSPARENT HUGE PAGES</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Transparent_Huge_Pages_on_Desktop_Linux.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Transparent_Huge_Pages_on_Desktop_Linux.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Transparent_Huge_Pages_on_Desktop_Linux.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Transparent_Huge_Pages_on_Desktop_Linux.txt</guid>
 <pubDate>Wed, 13 May 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[Tested on: Slackware-current Linux kernel 7.0.6 ]]></description>
 </item>
 <item>
 <title>WINDOW MANAGER AGNOSTIC WORKFLOWS</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Window_Manager_Agnostic_Workflows.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Window_Manager_Agnostic_Workflows.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Window_Manager_Agnostic_Workflows.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Window_Manager_Agnostic_Workflows.txt</guid>
 <pubDate>Tue, 12 May 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW Many lightweight window managers provide their own systems for: - keybindings ]]></description>
 </item>
 <item>
 <title>IDEs, UNIX, AND THE OLD WORKFLOW THAT NEVER WENT AWAY</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Unix_As_An_IDE.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Unix_As_An_IDE.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Unix_As_An_IDE.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Unix_As_An_IDE.txt</guid>
 <pubDate>Sun, 10 May 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW Every few years the Linux and Unix world rediscovers the same idea: combining navigation, editing, search, and shell interaction into a ]]></description>
 </item>
 <item>
 <title>NVI FAQ</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/nvi-faq.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/nvi-faq.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/nvi-faq.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/nvi-faq.txt</guid>
 <pubDate>Sat, 09 May 2026 23:46:00 +0000</pubDate>
 <description><![CDATA[Source: https://sites.google.com/a/bostic.com/keithbostic/the-berkeley-vi-editor-home-page/nvi-faq 1. HOW CAN I GET VI TO DISPLAY MY CHARACTER SET? ]]></description>
 </item>
 <item>
 <title>CONFIGURING A BASIC FIREWALL WITH UFW ON SLACKWARE</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_UFW_Firewall.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_UFW_Firewall.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_UFW_Firewall.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_UFW_Firewall.txt</guid>
 <pubDate>Sat, 09 May 2026 20:05:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW This document describes a minimal and explicit approach to configuring a basic firewall on Slackware using UFW (Uncomplicated Firewall). ]]></description>
 </item>
 <item>
 <title>EXPLORING HEIRLOOM-EX-VI: THE TRADITIONAL VI MODERNIZED</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Exploring_Heirloom_ex_vi.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Exploring_Heirloom_ex_vi.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Exploring_Heirloom_ex_vi.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Exploring_Heirloom_ex_vi.txt</guid>
 <pubDate>Sat, 09 May 2026 00:35:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW This document describes the heirloom-ex-vi editor, a continuation of the original Berkeley/AT&T ex/vi 3.7 source from 1985. ]]></description>
 </item>
 <item>
 <title>INTERVIEW WITH BILL JOY (UNIX REVIEW, 1984)</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/bill-joy-interview-1984.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/bill-joy-interview-1984.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/bill-joy-interview-1984.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/bill-joy-interview-1984.txt</guid>
 <pubDate>Sat, 09 May 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[The following interview is taken from the August 1984 issue of Unix Review magazine (which briefly changed its name to Performance Computing, but then dropped out of print and later ]]></description>
 </item>
 <item>
 <title>MY MTM SETUP</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/My_MTM_Setup.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/My_MTM_Setup.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/My_MTM_Setup.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/My_MTM_Setup.txt</guid>
 <pubDate>Sat, 09 May 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW I use mtm to avoid opening many terminal windows. Instead of managing multiple st instances, I keep everything ]]></description>
 </item>
 <item>
 <title>GIT BASH COMPLETION ON SLACKWARE</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Git_Bash_Completion_on_Slackware.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Git_Bash_Completion_on_Slackware.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Git_Bash_Completion_on_Slackware.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Git_Bash_Completion_on_Slackware.txt</guid>
 <pubDate>Sat, 09 May 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW Slackware provides programmable shell completion through the bash-completion package. ]]></description>
 </item>
 <item>
 <title>UNDERSTANDING .bash_profile AND .bashrc</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Understanding_Bash_Profile_and_Bashrc.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Understanding_Bash_Profile_and_Bashrc.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Understanding_Bash_Profile_and_Bashrc.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Understanding_Bash_Profile_and_Bashrc.txt</guid>
 <pubDate>Sat, 25 Apr 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW Most Linux users eventually need to customize their shell. The two files involved are ~/.bash_profile and ~/.bashrc. ]]></description>
 </item>
 <item>
 <title>GNU SCREEN ON MY LAPTOP</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/My_GNU_Screen_Setup.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/My_GNU_Screen_Setup.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/My_GNU_Screen_Setup.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/My_GNU_Screen_Setup.txt</guid>
 <pubDate>Thu, 16 Apr 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW I use GNU screen to avoid opening many terminal windows. Instead of managing multiple st instances, I keep everything ]]></description>
 </item>
 <item>
 <title>STOP OPENING HUGE FILES IN SCREEN EDITORS</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Stop_Opening_Huge_Files_in_Screen_Editors.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Stop_Opening_Huge_Files_in_Screen_Editors.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Stop_Opening_Huge_Files_in_Screen_Editors.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Stop_Opening_Huge_Files_in_Screen_Editors.txt</guid>
 <pubDate>Mon, 06 Apr 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW Screen editors such as nvi and vim are designed for interactive, cursor-based editing of reasonably sized text files. ]]></description>
 </item>
 <item>
 <title>NVI WAS NOT WRITTEN TO IMPROVE VI.</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Why_NVI_Exists.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Why_NVI_Exists.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Why_NVI_Exists.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Why_NVI_Exists.txt</guid>
 <pubDate>Fri, 03 Apr 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[IT WAS WRITTEN SO VI COULD SURVIVE. TL;DR nvi exists because the original vi could not be freely redistributed. ]]></description>
 </item>
 <item>
 <title>ENABLE SUDO ON SLACKWARE</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Enable_Sudo_on_Slackware.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Enable_Sudo_on_Slackware.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Enable_Sudo_on_Slackware.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Enable_Sudo_on_Slackware.txt</guid>
 <pubDate>Fri, 27 Mar 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW Slackware does not enable sudo by default. Administrative access is traditionally handled using su and the root account. ]]></description>
 </item>
 <item>
 <title>SLACKWARE INIT SYSTEM AND BOOT PROCESS</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Init_Boot_Process.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Init_Boot_Process.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Init_Boot_Process.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Init_Boot_Process.txt</guid>
 <pubDate>Mon, 23 Mar 2026 23:49:20 +0000</pubDate>
 <description><![CDATA[OVERVIEW In the age of systemd, many Linux users have never seen a real init script. They know systemctl and journalctl, but have no clear picture ]]></description>
 </item>
 <item>
 <title>SLACKWARE GPG KEY BACKUP AND RESTORE</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_GPG_Key_Backup_and_Restore.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_GPG_Key_Backup_and_Restore.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_GPG_Key_Backup_and_Restore.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_GPG_Key_Backup_and_Restore.txt</guid>
 <pubDate>Sat, 07 Mar 2026 15:07:18 +0000</pubDate>
 <description><![CDATA[OVERVIEW This document describes a simple and explicit method for backing up and restoring GPG keys on a Slackware system. ]]></description>
 </item>
 <item>
 <title>WAYLAND, X11, AND THE TRADE-OFFS OF MINIMALISM</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Understanding_Wayland_X11_and_Minimalism.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Understanding_Wayland_X11_and_Minimalism.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Understanding_Wayland_X11_and_Minimalism.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Understanding_Wayland_X11_and_Minimalism.txt</guid>
 <pubDate>Sat, 31 Jan 2026 18:29:05 +0000</pubDate>
 <description><![CDATA[OVERVIEW This document collects and organizes a set of arguments around Wayland, X11, minimal window ]]></description>
 </item>
 <item>
 <title>KEYD CONFIGURATION ON SLACKWARE</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Keyd_Configuration.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Keyd_Configuration.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Keyd_Configuration.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Keyd_Configuration.txt</guid>
 <pubDate>Tue, 27 Jan 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW keyd is a low-level keyboard remapping daemon that operates below X11, Wayland, and the window manager layer. ]]></description>
 </item>
 <item>
 <title>RUNNING SLACKWARE ON QEMU</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_QEMU_Guide.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_QEMU_Guide.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_QEMU_Guide.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_QEMU_Guide.txt</guid>
 <pubDate>Wed, 21 Jan 2026 21:43:04 +0000</pubDate>
 <description><![CDATA[OVERVIEW This document describes a minimal and transparent setup for running Slackware virtual machines using QEMU with KVM acceleration and UEFI ]]></description>
 </item>
 <item>
 <title>WHY I USE SXHKD</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Why_I_Use_sxhkd.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Why_I_Use_sxhkd.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Why_I_Use_sxhkd.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Why_I_Use_sxhkd.txt</guid>
 <pubDate>Fri, 16 Jan 2026 02:57:24 +0000</pubDate>
 <description><![CDATA[OVERVIEW Both pekwm and evilwm provide built-in keybinding support. Despite this, I choose to use sxhkd as a separate global hotkey daemon. ]]></description>
 </item>
 <item>
 <title>USING PASSWORD STORE AS AN ENCRYPTED ADDRESS SOURCE FOR MUTT</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Using_Password_Store_as_an_Address_Book_for_mutt.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Using_Password_Store_as_an_Address_Book_for_mutt.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Using_Password_Store_as_an_Address_Book_for_mutt.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Using_Password_Store_as_an_Address_Book_for_mutt.txt</guid>
 <pubDate>Sun, 04 Jan 2026 05:21:29 +0000</pubDate>
 <description><![CDATA[OVERVIEW Password Store (pass) is commonly described as a password manager, but its design is more general: it stores arbitrary plain text encrypted ]]></description>
 </item>
 <item>
 <title>REVISITING ST AFTER THE 2018 LWN TERMINAL EMULATOR ANALYSIS</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Revisiting_ST_after_LWN_2018.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Revisiting_ST_after_LWN_2018.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Revisiting_ST_after_LWN_2018.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Revisiting_ST_after_LWN_2018.txt</guid>
 <pubDate>Sat, 03 Jan 2026 06:01:53 +0000</pubDate>
 <description><![CDATA[OVERVIEW In 2018, LWN published a two-part series titled “A look at terminal emulators”, evaluating features and performance of several terminal ]]></description>
 </item>
 <item>
 <title>GIT MIRROR TIPS AND MULTI-REPOSITORY CONFIGURATION</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Git_Mirror_Tips.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Git_Mirror_Tips.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Git_Mirror_Tips.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Git_Mirror_Tips.txt</guid>
 <pubDate>Sat, 03 Jan 2026 05:44:46 +0000</pubDate>
 <description><![CDATA[OVERVIEW This document describes practical techniques for working with multiple Git repositories, managing different identities, and maintaining mirror ]]></description>
 </item>
 <item>
 <title>SLACKWARE LOGIN MESSAGE WITH FORTUNE AND COWSAY</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Cowsay.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Cowsay.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Cowsay.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Cowsay.txt</guid>
 <pubDate>Sat, 03 Jan 2026 05:41:32 +0000</pubDate>
 <description><![CDATA[OVERVIEW This document describes a simple and reversible method to enhance the Slackware login experience by displaying a random fortune message using ]]></description>
 </item>
 <item>
 <title>PASSWORD STORE WITH GIT</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Password_Store_with_Git_Guide.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Password_Store_with_Git_Guide.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Password_Store_with_Git_Guide.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Password_Store_with_Git_Guide.txt</guid>
 <pubDate>Sat, 03 Jan 2026 05:34:07 +0000</pubDate>
 <description><![CDATA[OVERVIEW This document describes a minimal and auditable setup for managing passwords using Password Store (pass) with GPG encryption and Git ]]></description>
 </item>
 <item>
 <title>SLACKWARE SSD PERFORMANCE TUNING</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_SSD_Performance_Tuning.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_SSD_Performance_Tuning.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_SSD_Performance_Tuning.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_SSD_Performance_Tuning.txt</guid>
 <pubDate>Sat, 03 Jan 2026 05:29:48 +0000</pubDate>
 <description><![CDATA[OVERVIEW This document describes a minimal and explicit approach to improving SSD and NVMe performance on Slackware. ]]></description>
 </item>
 <item>
 <title>SLACKWARE NTP CONFIGURATION (BRAZIL / BRT)</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_NTP_Configuration.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_NTP_Configuration.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_NTP_Configuration.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_NTP_Configuration.txt</guid>
 <pubDate>Sat, 03 Jan 2026 05:26:54 +0000</pubDate>
 <description><![CDATA[OVERVIEW This document describes a minimal and explicit configuration for synchronizing system time on Slackware using NTP (ntpd). ]]></description>
 </item>
 <item>
 <title>SERVING A SLACKWARE MIRROR</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Mirror_Serving_Guide.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Mirror_Serving_Guide.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Mirror_Serving_Guide.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Mirror_Serving_Guide.txt</guid>
 <pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[Overview: This document describes how to serve a Slackware mirror using Apache. The primary goal is to share an existing Slackware mirror ]]></description>
 </item>
 <item>
 <title>CREATING A LOCAL MIRROR OF SLACKWARE64-CURRENT</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Local_Mirror_Setup.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Local_Mirror_Setup.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Local_Mirror_Setup.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Local_Mirror_Setup.txt</guid>
 <pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[Overview: This document describes how to download and maintain a local Slackware mirror using AlienBob’s mirror script. It also explains how to use the ]]></description>
 </item>
 <item>
 <title>RUNNING SLACKWARE IN AN LXC CONTAINER</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_LXC_Guide.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_LXC_Guide.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_LXC_Guide.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_LXC_Guide.txt</guid>
 <pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[**Tested using LXC version 6 on Slackware-current (15.1)** Overview: This document provides instructions on setting up and running Slackware ]]></description>
 </item>
 <item>
 <title>BUILDING A NEW KERNEL FROM THE SLACKWARE TESTING TREE</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Kernel_Build_Guide.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Kernel_Build_Guide.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Kernel_Build_Guide.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Kernel_Build_Guide.txt</guid>
 <pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[This guide uses Slackware's testing/source kernel tree as a base and upgrades it to a newer upstream version while preserving Slackware structure. ]]></description>
 </item>
 <item>
 <title>INSTALLING FIREFOX NIGHTLY ON SLACKWARE</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Installing_Firefox_Nightly.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Installing_Firefox_Nightly.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Installing_Firefox_Nightly.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Installing_Firefox_Nightly.txt</guid>
 <pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[PART ONE Download Firefox 64-bit cd Downloads ]]></description>
 </item>
 <item>
 <title>INSTALLING VIM-PLUG</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Install_Vim_Plug.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Install_Vim_Plug.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Install_Vim_Plug.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Install_Vim_Plug.txt</guid>
 <pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[How to Install vim-plug (https://github.com/junegunn/vim-plug) vim .vimrc let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim' ]]></description>
 </item>
 <item>
 <title>USING GRUB ON SLACKWARE-CURRENT (ALSO 15.0)</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/GRUB_Slackware_Guide.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/GRUB_Slackware_Guide.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/GRUB_Slackware_Guide.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/GRUB_Slackware_Guide.txt</guid>
 <pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[This guide applies to Slackware-current systems while LILO is still the default installer bootloader. GRUB setup remains an explicit, manual administrative choice. ]]></description>
 </item>
 <item>
 <title>USING GRUB 2.12 IN SLACKWARE-CURRENT (15.1)</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/GRUB_Slackware.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/GRUB_Slackware.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/GRUB_Slackware.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/GRUB_Slackware.txt</guid>
 <pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[ grub-install --target=x86_64-efi --efi-directory=/boot/efi/ --bootloader-id=Slackware --recheck grub-mkconfig -o /boot/grub/grub.cfg Everytime update the kernel you should run: ]]></description>
 </item>
 <item>
 <title>NERDCTL AND CONTAINERD ON SLACKWARE-CURRENT</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Nerdctl_Containerd_Guide.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Slackware_Nerdctl_Containerd_Guide.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Nerdctl_Containerd_Guide.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Nerdctl_Containerd_Guide.txt</guid>
 <pubDate>Wed, 27 Aug 2025 00:00:00 +0000</pubDate>
 <description><![CDATA[1. Overview This document provides a step-by-step guide for running containers on Slackware using containerd and nerdctl. Containerd is a high-level container runtime that uses runc for low-level execution. ]]></description>
 </item>
 <item>
 <title>INSTALLING GOOGLE CHROME ON SLACKWARE</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Install_Google_Chrome_Slackware.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Install_Google_Chrome_Slackware.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Install_Google_Chrome_Slackware.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Install_Google_Chrome_Slackware.txt</guid>
 <pubDate>Thu, 03 Apr 2025 16:02:48 +0000</pubDate>
 <description><![CDATA[1. Download the Slackbuild Slackware 15 lftp -c "open https://mirrors.kernel.org/slackware/slackware64-15.0/extra/ && mirror google-chrome" ]]></description>
 </item>
 <item>
 <title>ENABLING LANDLOCK ON SLACKWARE</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Enable_Landlock_on_Slackware.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master/notes/Enable_Landlock_on_Slackware.txt</guid>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Enable_Landlock_on_Slackware.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Enable_Landlock_on_Slackware.txt</guid>
 <pubDate>Sun, 30 Mar 2025 11:35:42 +0000</pubDate>
 <description><![CDATA[This document explains how to enable Landlock on Slackware-current when using kernel 6.14. Landlock is a security module that provides application sandboxing capabilities. ]]></description>
 </item>

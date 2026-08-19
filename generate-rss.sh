@@ -14,7 +14,9 @@ set -eu
 # Configuration
 #
 
-BASE_URL="https://raw.githubusercontent.com/r1w1s1/code-notes/refs/heads/master"
+# Keep item links and GUIDs stable so feed readers do not re-import every note
+# when GitHub's equivalent branch URL spelling changes.
+BASE_URL="https://raw.githubusercontent.com/r1w1s1/code-notes/master"
 FEED_LINK="https://github.com/r1w1s1/code-notes"
 FEED_TITLE="code-notes"
 FEED_DESC="Concise technical notes on Slackware, Unix, and minimal tooling."
