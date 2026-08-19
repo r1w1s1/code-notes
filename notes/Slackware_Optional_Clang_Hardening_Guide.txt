@@ -1,0 +1,263 @@
+OPTIONAL CLANG AND HARDENED PACKAGE BUILDS ON SLACKWARE
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| Slackware does not need to change its system-wide compiler       |
+| policy. Package maintainers and users can opt into Clang and     |
+| standard compiler hardening in individual SlackBuilds.           |
+|                                                                  |
+| A practical compatible baseline is:                              |
+|                                                                  |
+|   -fstack-protector-strong                                      |
+|   -D_FORTIFY_SOURCE=2                                           |
+|   -Wl,-z,relro -Wl,-z,now                                       |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+Many Linux distributions apply security-related compiler and linker
+flags while building packages. Slackware generally keeps its build
+scripts simple and close to upstream, which is useful for transparency
+and maintenance.
+
+These approaches are not contradictory. A Slackware user can maintain a
+small collection of locally rebuilt packages using Clang and hardening,
+without changing the compiler used by the rest of the system.
+
+This document describes an optional package-level policy. It is not an
+official Slackware policy and should not be applied blindly to every
+package.
+
+
+UPSTREAM BUILDS VS PACKAGE BUILDS
+
+Upstream Makefiles should usually remain portable and compiler-neutral:
+
+    CC ?= cc
+
+On Slackware, cc normally resolves to GCC. On OpenBSD and FreeBSD, cc
+normally resolves to Clang.
+
+A distribution package build can select a compiler explicitly:
+
+    CC=${CC:-clang}
+
+This keeps the package default as Clang while allowing an override such
+as:
+
+    CC=gcc ./example.SlackBuild
+
+When an upstream project already supports CC, it is usually better to
+pass the compiler from the SlackBuild than to patch the upstream
+Makefile.
+
+
+RECOMMENDED BASELINE
+
+For Slackware 15.0 and Slackware -current, use this conservative
+baseline:
+
+    CFLAGS="$SLKCFLAGS -fstack-protector-strong -D_FORTIFY_SOURCE=2"
+    LDFLAGS="-Wl,-z,relro -Wl,-z,now"
+
+The flags provide the following protections:
+
+    -fstack-protector-strong
+        Adds stack canaries to functions considered vulnerable to stack
+        corruption.
+
+    -D_FORTIFY_SOURCE=2
+        Enables additional compile-time and runtime checks in supported
+        libc headers when optimization is enabled.
+
+    -Wl,-z,relro
+        Makes suitable relocation data read-only after relocation.
+
+    -Wl,-z,now
+        Resolves dynamic symbols at startup and prevents lazy binding.
+
+Use -D_FORTIFY_SOURCE=2 as the common baseline because Slackware 15
+includes older compiler and libc combinations. Newer Fedora-style builds
+may use level 3, but level 3 is not equally supported by older systems.
+
+
+SLACKBUILD EXAMPLE
+
+For a Makefile that accepts CC, CFLAGS, and LDFLAGS:
+
+    CC=${CC:-clang}
+    CFLAGS="$SLKCFLAGS -fstack-protector-strong -D_FORTIFY_SOURCE=2"
+    LDFLAGS="-Wl,-z,relro -Wl,-z,now"
+
+    make CC="$CC" CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS"
+
+For Autoconf projects, pass the variables to configure:
+
+    CC=${CC:-clang}
+    CFLAGS="$SLKCFLAGS -fstack-protector-strong -D_FORTIFY_SOURCE=2"
+    LDFLAGS="-Wl,-z,relro -Wl,-z,now"
+
+    CC="$CC" CFLAGS="$CFLAGS" LDFLAGS="$LDFLAGS" \
+      ./configure --prefix=/usr
+
+Some small Makefiles do not use LDFLAGS. In that case, add LDFLAGS to
+the link command with a local patch, or pass the -Wl options through the
+compiler flags only when the project links and compiles in one command.
+
+
+ARCHITECTURE FLAGS
+
+Do not use this in a distributable package:
+
+    -march=native
+
+It generates code for the CPU that performs the build. A package built
+on a newer machine may fail with an illegal-instruction error on an older
+machine.
+
+Use Slackware architecture flags instead:
+
+    i586:   -O2 -march=i586 -mtune=i686
+    i686:   -O2 -march=i686 -mtune=i686
+    x86_64: -O2 -fPIC
+
+The exact flags still depend on the package and architecture support.
+
+
+OPTIMIZATION LEVELS
+
+    -O2
+        Conservative, widely used by distributions, and a good default
+        for package builds.
+
+    -O3
+        More aggressive optimization. It does not automatically improve
+        performance and can increase build time or binary size.
+
+For a small package, -O2 is generally sufficient. Do not change an
+upstream optimization level without a clear reason when preparing a
+small upstream portability patch.
+
+
+VERIFYING A PACKAGE
+
+After installing a test package, identify the executable:
+
+    command -v xhidecursor
+    file /usr/bin/xhidecursor
+
+Check compiler metadata:
+
+    readelf -p .comment /usr/bin/xhidecursor
+
+Check for PIE, RELRO, and BIND_NOW:
+
+    readelf -lW /usr/bin/xhidecursor
+    readelf -dW /usr/bin/xhidecursor
+
+Look for:
+
+    GNU_RELRO
+    BIND_NOW
+    Flags: NOW PIE
+
+Check for stack protector and Fortify symbols:
+
+    readelf -Ws /usr/bin/xhidecursor
+
+Common indicators include:
+
+    __stack_chk_fail
+    __memcpy_chk
+    __memmove_chk
+    __vprintf_chk
+    __strlcpy_chk
+
+These checks are useful evidence, but they do not prove that every
+function received every protection. The build command and package build
+log remain important.
+
+
+PACKAGE VALIDATION
+
+Before sharing a package, run:
+
+    sbolint example.SlackBuild
+    sbopkglint /tmp/example-version-arch-build_SBo.tgz
+
+The package should also be tested by actually using the program. Compiler
+hardening can expose source bugs or portability problems that a normal
+build does not reveal.
+
+
+GOOD STARTING CANDIDATES
+
+Start with small C projects where the build system is easy to understand:
+
+Except for xterm, the packages below are SlackBuilds.org packages that I
+maintain. xterm is an official Slackware package and is included as a
+separate example of a larger package that can be rebuilt locally.
+
+    cwm
+    doas
+    got
+    xhidecursor
+    bsddialog
+    sfeed
+    tabbed
+    tmux
+    xterm
+
+xterm is considerably larger than the other examples and should be
+tested more carefully. It has many optional features, uses Autoconf, and
+has platform-specific terminal and PTY behavior.
+
+
+IMPORTANT LIMITATIONS
+
+Not every package should receive the same flags automatically.
+
+    - Some packages have compiler or linker assumptions.
+    - Some projects fail with newer Fortify levels.
+    - Some packages need special linker ordering.
+    - Some architectures do not support every hardening option.
+    - C++ projects may need separate CXXFLAGS and CXX settings.
+    - Go, Rust, Zig, shell, and font packages use different toolchains.
+
+Keep exceptions explicit in the SlackBuild and document why they exist.
+
+
+LOCAL PACKAGE REPOSITORIES
+
+If publishing hardened rebuilds of official Slackware packages, identify
+them as custom rebuilds. Use a package tag different from the official
+Slackware or SlackBuilds.org tags, for example:
+
+    _CLANG
+    _HARDENED
+
+Do not imply that the packages are official Slackware builds. Keep the
+source version, compiler version, build flags, and target Slackware
+release documented for reproducibility.
+
+
+CONCLUSION
+
+Slackware users do not need to choose between the traditional Slackware
+build philosophy and modern package hardening.
+
+The cleanest division is:
+
+    upstream Makefile  -> portable and compiler-neutral
+    SlackBuild         -> distribution compiler and hardening policy
+
+Start with a small set of packages, test each one, verify the resulting
+ELF binaries, and keep exceptions visible. This provides a practical
+optional hardened package collection without changing Slackware itself.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-08-10
