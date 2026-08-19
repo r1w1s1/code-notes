@@ -4,8 +4,36 @@
 <title>code-notes</title>
 <link>https://repo.or.cz/code-notes.git</link>
 <description>Concise technical notes on Slackware, Unix, and minimal tooling.</description>
-<lastBuildDate>Fri, 05 Jun 2026 19:20:47 +0000</lastBuildDate>
+<lastBuildDate>Wed, 19 Aug 2026 04:41:46 +0000</lastBuildDate>
 <atom:link href="https://repo.or.cz/code-notes.git/blob_plain/HEAD:/rss.xml" rel="self" type="application/rss+xml" />
+<item>
+<title>USING ED AS A SMALL AND RELIABLE TEXT EDITOR</title>
+<link>https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/ed_quick_ref.txt</link>
+<guid isPermaLink="true">https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/ed_quick_ref.txt</guid>
+<pubDate>Sun, 16 Aug 2026 00:00:00 +0000</pubDate>
+<description><![CDATA[OVERVIEW ed does not display a file when it opens it. It reads the file into an in-memory buffer and waits for commands. Most commands operate on the ]]></description>
+</item>
+<item>
+<title>OPTIONAL CLANG AND HARDENED PACKAGE BUILDS ON SLACKWARE</title>
+<link>https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Slackware_Optional_Clang_Hardening_Guide.txt</link>
+<guid isPermaLink="true">https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Slackware_Optional_Clang_Hardening_Guide.txt</guid>
+<pubDate>Mon, 10 Aug 2026 00:00:00 +0000</pubDate>
+<description><![CDATA[OVERVIEW Many Linux distributions apply security-related compiler and linker flags while building packages. Slackware generally keeps its build ]]></description>
+</item>
+<item>
+<title>USING NVI IN 2026</title>
+<link>https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Using_NVI_in_2026.txt</link>
+<guid isPermaLink="true">https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Using_NVI_in_2026.txt</guid>
+<pubDate>Sun, 26 Jul 2026 01:45:45 +0000</pubDate>
+<description><![CDATA[OVERVIEW There is a common assumption that modern development requires modern editors, plugins, and IDE-like features. ]]></description>
+</item>
+<item>
+<title>UNDERSTANDING SLACKWARE’S PHILOSOPHY</title>
+<link>https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Understanding_Slackware_Philosophy.txt</link>
+<guid isPermaLink="true">https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Understanding_Slackware_Philosophy.txt</guid>
+<pubDate>Fri, 24 Jul 2026 05:54:29 +0000</pubDate>
+<description><![CDATA[OVERVIEW Slackware is one of the oldest surviving GNU/Linux distributions. Rather than chasing trends or rapid change, Slackware has always ]]></description>
+</item>
 <item>
 <title>USING NVI AS A MINIMAL AND FAST TEXT EDITOR</title>
 <link>https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/NVI_Editor_Guide.txt</link>
@@ -105,13 +133,6 @@
 <description><![CDATA[IT WAS WRITTEN SO VI COULD SURVIVE. TL;DR nvi exists because the original vi could not be freely redistributed. ]]></description>
 </item>
 <item>
-<title>USING NVI IN 2026</title>
-<link>https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Using_NVI_in_2026.txt</link>
-<guid isPermaLink="true">https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Using_NVI_in_2026.txt</guid>
-<pubDate>Fri, 27 Mar 2026 22:27:59 +0000</pubDate>
-<description><![CDATA[OVERVIEW There is a common assumption that modern development requires modern editors, plugins, and IDE-like features. ]]></description>
-</item>
-<item>
 <title>ENABLE SUDO ON SLACKWARE</title>
 <link>https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Enable_Sudo_on_Slackware.txt</link>
 <guid isPermaLink="true">https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Enable_Sudo_on_Slackware.txt</guid>
@@ -173,13 +194,6 @@
 <guid isPermaLink="true">https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Revisiting_ST_after_LWN_2018.txt</guid>
 <pubDate>Sat, 03 Jan 2026 06:01:53 +0000</pubDate>
 <description><![CDATA[OVERVIEW In 2018, LWN published a two-part series titled “A look at terminal emulators”, evaluating features and performance of several terminal ]]></description>
-</item>
-<item>
-<title>UNDERSTANDING SLACKWARE’S PHILOSOPHY</title>
-<link>https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Understanding_Slackware_Philosophy.txt</link>
-<guid isPermaLink="true">https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Understanding_Slackware_Philosophy.txt</guid>
-<pubDate>Sat, 03 Jan 2026 05:54:29 +0000</pubDate>
-<description><![CDATA[OVERVIEW Slackware is one of the oldest surviving GNU/Linux distributions. Rather than chasing trends or rapid change, Slackware has always ]]></description>
 </item>
 <item>
 <title>GIT MIRROR TIPS AND MULTI-REPOSITORY CONFIGURATION</title>
