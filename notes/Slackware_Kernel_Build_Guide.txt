@@ -1,8 +1,8 @@
 BUILDING A NEW KERNEL FROM THE SLACKWARE TESTING TREE
 
 This guide uses Slackware's testing/source kernel tree as a base
-and upgrades it to a newer upstream version while preserving
-Slackware structure.
+for upgrading to a newer upstream version while preserving Slackware's
+structure.
 
 
 ------------------------------------------------------------------
@@ -12,19 +12,6 @@ Slackware structure.
 Mirror the current testing kernel tree:
 
    lftp -c "open https://mirrors.kernel.org/slackware/slackware64-current/source/k618/; mirror . k618"
-
-This creates a local directory containing:
-
-   doinst.sh/
-   kernel-configs/
-   slack-desc/
-   build-all-kernels.sh
-   kernel-generic.SlackBuild
-   kernel-headers.SlackBuild
-   kernel-source.SlackBuild
-   linux-6.18.20.tar.xz
-   linux-6.18.20.tar.sign
-
 
 ------------------------------------------------------------------
 
@@ -42,6 +29,17 @@ Remove the old tarball:
 Download the new upstream kernel:
 
    wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.19.11.tar.{xz,sign}
+
+Verify the kernel signature:
+
+   xz -cd linux-6.19.11.tar.xz | \
+   gpg --verify linux-6.19.11.tar.sign -
+
+The signature applies to the uncompressed tar archive. The corresponding
+kernel signing key must be available in your GPG keyring. For Greg
+Kroah-Hartman's releases, it can be located with:
+
+   gpg --locate-keys gregkh@kernel.org
 
 
 ------------------------------------------------------------------
@@ -71,9 +69,8 @@ Save updated config back to build tree:
 
 3.1 Apply Patches (optional)
 
-Patches from git.kernel.org must be downloaded manually using a
-browser. The site is protected by Anubis, a proof-of-work bot
-protection that blocks automated tools like curl and wget.
+Patches from git.kernel.org must be downloaded manually using a browser;
+the site is protected by Anubis and blocks tools like curl and wget.
 
 To apply a patch manually:
 
@@ -109,31 +106,27 @@ From inside linux-6.19.x directory:
 
 Initrd Handling
 
-Slackware's kernel-generic package includes doinst.sh,
-which automatically runs geninitrd after installation
-when appropriate.
+Slackware's kernel-generic package includes doinst.sh, which runs
+geninitrd after installation when appropriate.
 
 Behavior is controlled by:
 
   /etc/default/geninitrd
 
-Manual initrd generation is normally not required.
+Manual initrd generation is normally unnecessary.
 
 
 ------------------------------------------------------------------
 
 Notes
 
-- Do not rename package names.
-- Do not modify SlackBuild naming.
-- Use version number for differentiation.
+- Keep the package names and SlackBuild names unchanged.
+- Use the kernel version to distinguish packages.
+- Preserve Slackware's directory layout for compatibility.
 - Testing directories may change; mirror once and maintain locally.
-- Preserve Slackware directory layout for compatibility.
-- git.kernel.org is protected by Anubis; patches must be downloaded
-  manually via a browser.
 
-This workflow mirrors Slackware's source/k structure
-while allowing independent upstream kernel tracking.
+This workflow mirrors Slackware's source/k structure while allowing
+independent upstream kernel tracking.
 
 
 ------------------------------------------------------------------
