@@ -57,7 +57,6 @@ Examples:
     find
     vi/nvi
     tmux
-    mtm
     ssh
 
 These tools cooperate through the shell.
@@ -131,7 +130,6 @@ Tools such as:
 
     screen
     tmux
-    mtm
 
 allow the shell environment itself to become persistent.
 
@@ -176,7 +174,6 @@ entire workspace:
     Git interface
     language server
     integrated terminal
-    AI assistant
     workspace state
 
 For some developers this is extremely productive.
@@ -271,10 +268,10 @@ RELATED DOCUMENTS
 The workflow described in this document connects naturally with:
 
     USING NVI AS A MINIMAL AND FAST TEXT EDITOR
-      https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/NVI_Editor_Guide.txt
+      https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/NVI_Editor_Guide.txt
    
-    MY MTM SETUP
-      https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/My_MTM_Setup.txt
+    MY TMUX SETUP
+      https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/My_TMUX_Setup.txt
 
 These documents describe the editor and terminal workflow used
 alongside the shell-centered Unix approach discussed here.
@@ -302,4 +299,4 @@ enough.
 
 ------------------------------------------------------------------
 
-Last Modified: 2026-05-10
+Last Modified: 2026-09-23

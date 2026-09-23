@@ -1,0 +1,197 @@
+MY TMUX SETUP
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| tmux gives me a persistent terminal workspace inside xterm.      |
+| The menu starts or reuses the main session and opens three       |
+| windows for shells, editors, and terminal tools.                 |
++------------------------------------------------------------------+
+
+
+OVERVIEW
+
+I use tmux as the session manager for my terminal workflow.
+
+The session runs inside xterm and remains available when the
+terminal window is closed or the connection is detached. This lets
+me keep shells, nvi, and long-running commands in one place.
+
+My basic setup is:
+
+    xterm + tmux + nvi + coreutils
+
+The shell remains the workspace while tmux provides persistent
+windows, panes, and session management.
+
+
+STARTING TMUX FROM THE MENU
+
+The `termtmux` entry in ~/.bin/menu opens tmux inside xterm.
+
+It uses a session named:
+
+    main
+
+If the session does not exist, the menu creates it and adds two
+additional windows. The result is a persistent session with three
+windows:
+
+    main:0
+    main:1
+    main:2
+
+The menu then selects the first window and attaches to the session.
+If `main` already exists, it is reused instead of creating a new
+session.
+
+The menu's startup sequence is conceptually:
+
+    if session "main" does not exist:
+        create session "main" in the background
+        create window 1 in session "main"
+        create window 2 in session "main"
+    select window 0 in session "main"
+    attach to session "main"
+
+In the actual shell script, `tmux has-session -t main` performs the
+check. The commands that create the session and windows run only when
+that check fails. The final attach command runs every time.
+
+This makes the menu a convenient entry point without requiring a
+separate startup script for each terminal window.
+
+
+SESSION WORKFLOW
+
+The main session is useful for keeping a stable terminal environment:
+
+    - window 0: primary shell or nvi
+    - window 1: another shell, logs, or monitoring commands
+    - window 2: Git, builds, or administrative commands
+
+The exact purpose of each window can change during the day. The
+important part is that the session and its processes remain alive
+while xterm is closed or tmux is detached.
+
+Attach to the existing session manually with:
+
+    tmux attach-session -t main
+
+List available sessions with:
+
+    tmux list-sessions
+
+Detach without stopping the session with:
+
+    Ctrl-b d
+
+
+DEFAULT KEY BINDINGS
+
+This configuration keeps tmux's default prefix:
+
+    Ctrl-b
+
+Common commands:
+
+    Ctrl-b c       create a new window
+    Ctrl-b n       next window
+    Ctrl-b p       previous window
+    Ctrl-b 0       select window 0
+    Ctrl-b 1       select window 1
+    Ctrl-b 2       select window 2
+    Ctrl-b %       split vertically
+    Ctrl-b "       split horizontally
+    Ctrl-b Arrow   move between panes
+    Ctrl-b d       detach from the session
+    Ctrl-b [       enter copy mode
+
+The local configuration rebinds `Ctrl-b p` to paste from the X11
+clipboard. Use the window number or another window command when
+switching to a previous window.
+
+Window names and numbers are shown in the status bar at the bottom
+of the terminal.
+
+
+TMUX CONFIGURATION
+
+The configuration file is:
+
+    ~/.tmux.conf
+
+The main choices are:
+
+    - tmux-256color as the default terminal type
+    - truecolor support for xterm, st, and alacritty
+    - Sixel support for xterm
+    - a 20,000-line scrollback history
+    - mouse support for scrolling, selection, and pane resizing
+    - vi keys in copy mode
+    - system clipboard integration through xclip
+    - a minimal black status bar with date and time
+
+The configuration also enables tmux clipboard support and provides
+mouse selection and explicit copy/paste bindings through xclip.
+
+Reload the configuration without leaving the session:
+
+    Ctrl-b r
+
+The reload binding displays a confirmation message in the status bar.
+
+
+COPY AND SCROLLBACK
+
+Mouse support makes ordinary scrolling and selection work naturally.
+Copy mode uses vi-style keys, matching the rest of my keyboard-driven
+workflow.
+
+The `y` binding copies the current selection to the X11 clipboard:
+
+    Ctrl-b [
+    movement keys
+    y
+
+The `p` binding pastes from the X11 clipboard:
+
+    Ctrl-b p
+
+The system clipboard integration depends on `xclip` being available.
+
+
+WHY TMUX
+
+tmux fits this workflow better than opening many independent xterm
+windows:
+
+    - sessions persist independently of the terminal window
+    - windows organize different activities
+    - panes allow related commands to remain visible together
+    - the same environment works locally and over SSH
+    - the configuration is kept in one readable file
+
+The goal is not to turn the terminal into a full IDE. tmux provides
+just the session and layout management needed by the shell-centered
+workflow.
+
+
+CONCLUSION
+
+My current terminal workflow is centered on:
+
+    xterm
+    tmux
+    bash
+    nvi
+    coreutils
+
+The menu provides a consistent way to enter the persistent `main`
+session, while tmux keeps the shell, editor, and command-line tools
+organized in one terminal environment.
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-09-23

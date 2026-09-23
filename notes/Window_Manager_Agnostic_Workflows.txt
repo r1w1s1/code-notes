@@ -282,8 +282,8 @@ RELATED DOCUMENTS
       https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Why_I_Use_sxhkd.txt
     UNIX AS AN IDE
       https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Unix_As_An_IDE.txt
-    MY MTM SETUP
-      https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/My_MTM_Setup.txt
+    MY TMUX SETUP
+      https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/My_TMUX_Setup.txt
     UNDERSTANDING WAYLAND, X11, AND MINIMALISM
       https://repo.or.cz/code-notes.git/blob_plain/HEAD:/notes/Understanding_Wayland_X11_and_Minimalism.txt 
 
