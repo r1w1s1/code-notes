@@ -1,0 +1,464 @@
+MY UW TTYP0 SETUP
+
++------------------------------------------------------------------+
+| tl;dr                                                            |
+|                                                                  |
+| One font family, two setups: the local console and X11.          |
+| First discover the installed font names, then configure each.    |
+| The console selects a file; Xft selects a family via Fontconfig. |
++------------------------------------------------------------------+
+
+
+INTRODUCTION: ONE FAMILY, DIFFERENT FONT NAMES
+
+UW ttyp0 is a monospaced bitmap font family. I like its appearance
+both in graphical terminals and on the Linux text console.
+
+Slackware-current added fonts-uw-ttyp0 on September 25, 2026. The
+package provides graphical fonts and Linux console fonts. Selected
+console fonts are also included in the Slackware installer.
+
+This guide assumes the fonts-uw-ttyp0 package is installed.
+
+Before copying any settings, it helps to understand what a font name
+means. The package name identifies the software you installed. It is
+not necessarily the name an application expects in its configuration.
+
+There are two separate environments in this guide:
+
+    Local Linux console:
+        The text screen reached with Ctrl+Alt+F2, for example.
+        setfont loads a console font file, chosen by its filename.
+
+    X11 desktop:
+        Graphical applications such as xterm, dmenu, cwm, and Fluxbox.
+        In this setup they use Xft and ask Fontconfig for a font
+        family name stored inside the graphical font files.
+
+Using the same family in both environments does not make their
+configuration names interchangeable. We discover those names below
+before putting them into any application or startup configuration.
+
+The same family is available in different formats:
+
+    OTB   OpenType bitmap fonts for applications using Fontconfig/Xft
+    PCF   Bitmap fonts for the traditional X11 font system
+    PSF   Linux console fonts loaded with setfont
+
+HOW TO DISCOVER THE FONT NAMES
+
+The graphical family name comes from metadata inside the font files,
+not from guessing the package name or removing a filename extension.
+List the families and files known to Fontconfig:
+
+    fc-list -f '%{family}: %{file}\n' | grep -i ttyp0
+
+On my system, an entry looks like:
+
+    Ttyp0 OTB: /usr/share/fonts/X11/misc/UW-Ttyp0-22-Regular.otb
+
+The text before the colon is the family name used in the graphical
+application settings. To inspect the installed file directly, even
+if Fontconfig has not discovered its directory, use:
+
+    fc-scan --format '%{family}\n%{style}\n%{pixelsize}\n' \
+      /usr/share/fonts/X11/misc/UW-Ttyp0-22-Regular.otb
+
+For that file, the output is:
+
+    Ttyp0 OTB
+    Regular
+    22
+
+If fc-scan identifies the font but fc-list does not list it, follow
+the Fontconfig directory configuration section below. Do not infer
+the installed family name from fc-match alone: it can return a
+different family as a fallback.
+
+For the Linux console, list the installed console font files instead:
+
+    find /usr/share/kbd/consolefonts -type f | grep -i ttyp0
+
+One of the results is:
+
+    /usr/share/kbd/consolefonts/WET-Ttyp0Regular22x11.psf.gz
+
+Remove the directory and the .psf.gz suffix to get the short name
+accepted by setfont:
+
+    WET-Ttyp0Regular22x11
+
+Other entries provide different sizes, weights, and character sets.
+WET identifies a console character-set selection; it is part of the
+filename, not part of the Xft family name. Regular selects the normal
+weight, and 22x11 gives the height and width in pixels.
+
+
+THE NAMES AND SIZES USED IN THIS GUIDE
+
+The commands above explain where my configuration names come from:
+
+    Ttyp0 OTB
+        The graphical family name, read from the font metadata.
+        Used by xterm's faceName, dmenu's -fn, cwm's fontname,
+        and the font properties in a Fluxbox style overlay.
+
+    WET-Ttyp0Regular22x11
+        The short console filename, found in consolefonts.
+        Used by setfont and FONT in /etc/default/rc.font.
+
+My graphical setup requests 14 points at 112 DPI. My console font
+has a fixed cell size of 11 pixels wide by 22 pixels high. A point
+size and a pixel height are different measurements; the X11 section
+explains how they relate.
+
+The following sections configure the local console first, then
+Fontconfig and the individual X11 applications.
+
+
+LOCAL LINUX CONSOLE: /etc/default/rc.font
+
+The local Linux console is a virtual terminal such as /dev/tty2.
+From an X11 desktop, Ctrl+Alt+F2 normally switches to it. Log in there
+to test the console font. This is different from opening an xterm
+window or connecting to the machine over SSH.
+
+The console uses PSF fonts and does not use Fontconfig, .Xresources,
+or the OTB files described in the graphical setup below.
+
+For a temporary test, run this on the virtual console, with the
+permissions needed to change its font:
+
+    setfont WET-Ttyp0Regular22x11
+
+setfont finds the installed file in:
+
+    /usr/share/kbd/consolefonts/WET-Ttyp0Regular22x11.psf.gz
+
+The short name is enough; the path and .psf.gz suffix can be omitted.
+
+To keep that choice across boots, edit /etc/default/rc.font as root.
+Replace the existing FONT=auto line with:
+
+    FONT=WET-Ttyp0Regular22x11
+
+Leave FONTDOUBLE commented out to keep the native size:
+
+    #FONTDOUBLE=" -d "
+
+When FONT names a specific font, TRYFONTS and MINCOLS do not control
+the selection. They apply to FONT=auto. There is no need to remove
+the example font lists or change MINCOLS for this fixed-font setup.
+
+/etc/default/rc.font stores the settings. /etc/rc.d/rc.font is the
+script that reads those settings and loads the font. Edit the defaults
+file to choose a font; changing the startup script is unnecessary.
+
+To apply the configuration without rebooting, run as root from the
+local virtual console:
+
+    bash /etc/rc.d/rc.font
+
+On my laptop, the 11x22 font gives 174 columns and 49 lines. The
+result depends on the console resolution. Check the current values:
+
+    tput cols
+    tput lines
+
+Run these on the actual virtual console to measure it. Running them
+inside xterm reports the xterm window dimensions instead.
+
+This configuration does not change the font in X11 applications or
+in a remote SSH client's terminal. Those have their own settings.
+
+
+X11: MAKE THE OTB FONTS VISIBLE TO FONTCONFIG
+
+The initial official Slackware package installs its OTB files in:
+
+    /usr/share/fonts/X11/misc
+
+My earlier SlackBuild installed them in:
+
+    /usr/share/fonts/misc/uw-ttyp0
+
+On my system, Slackware's Fontconfig searches /usr/share/fonts/misc
+but does not search /usr/share/fonts/X11/misc by default. Moving the
+OTB files therefore made "Ttyp0 OTB" disappear from font matching.
+
+Check first:
+
+    fc-list 'Ttyp0 OTB'
+    fc-match -f '%{family}\n%{file}\n' 'Ttyp0 OTB'
+
+If the first command prints nothing and the second returns a different
+family, such as DejaVu Sans, the requested font is not being found.
+fc-match returning a font does not prove it found the requested family.
+
+My solution is a per-user configuration. Create the directory:
+
+    mkdir -p ~/.config/fontconfig
+
+Add the following to ~/.config/fontconfig/fonts.conf. If the file
+already contains settings, add only the dir element inside its existing
+fontconfig element instead of replacing the file.
+
+    <?xml version="1.0"?>
+    <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+    <fontconfig>
+      <dir>/usr/share/fonts/X11/misc</dir>
+    </fontconfig>
+
+Refresh the cache as the normal user:
+
+    fc-cache -f
+
+Verify again:
+
+    fc-match -f '%{family}\n%{file}\n' 'Ttyp0 OTB:size=14:dpi=112'
+
+On my system this selects:
+
+    Ttyp0 OTB
+    /usr/share/fonts/X11/misc/UW-Ttyp0-22-Regular.otb
+
+The directory rule makes fonts available; it does not make ttyp0 the
+default font for every application. The application settings below
+select it explicitly.
+
+This is a workaround for the package layout and Fontconfig defaults
+described above. If a later package already makes the font discoverable,
+an extra directory rule is unnecessary.
+
+The rule lives in my home and applies only to my user. For a deliberate
+system-wide setup, the administrator can instead add the directory in
+/etc/fonts/local.conf or a suitable file in /etc/fonts/conf.d/. Do not
+edit the package-managed /etc/fonts/fonts.conf directly.
+
+
+XTERM AND UXTERM: ~/.Xresources
+
+My ~/.Xresources contains:
+
+    Xft.dpi: 112
+
+    XTerm*faceName: Ttyp0 OTB
+    XTerm*faceSize: 14
+
+    UXTerm*faceName: Ttyp0 OTB
+    UXTerm*faceSize: 14
+
+The UXTerm entries cover uxterm's different resource class.
+
+The DPI setting is my display preference, not a requirement for ttyp0.
+At 112 DPI, 14 points is about 21.8 pixels, which matches the 22-pixel
+bitmap size. A different DPI can result in a different selected size
+or scaling. Keep an existing DPI setting unless you intend to change it.
+
+Merge the resources into the current X session:
+
+    xrdb -merge ~/.Xresources
+
+Then open a new xterm. Ensure the X session startup also loads
+~/.Xresources so the settings survive a new login.
+
+For a one-off test without editing resources:
+
+    xterm -fa 'Ttyp0 OTB' -fs 14
+
+If an exact bitmap height is preferred over a point size, test:
+
+    xterm -fa 'Ttyp0 OTB:pixelsize=22'
+
+
+CWM
+
+In ~/.cwmrc, my font setting is:
+
+    fontname "Ttyp0 OTB:size=14"
+
+This controls cwm's own font, including its menus. It does not set
+the font inside xterm or an external dmenu process.
+
+To request the native 22-pixel size explicitly, use instead:
+
+    fontname "Ttyp0 OTB:pixelsize=22"
+
+My ~/.cwmrc also contains:
+
+    bind-key 4-r restart
+
+With that binding, Super+r restarts cwm to load the updated settings.
+The shortcut is part of my configuration, not a universal default.
+
+
+FLUXBOX: KEEP THE STANDARD STYLE AND OVERRIDE ITS FONTS
+
+Fluxbox can apply a personal overlay on top of the selected style.
+This lets me keep the packaged theme and change only its fonts,
+without maintaining a separate copy of theme.cfg.
+
+In ~/.fluxbox/init, set the overlay path. Update an existing entry
+if present rather than adding a duplicate:
+
+    session.styleOverlay: ~/.fluxbox/overlay
+
+Keep session.styleFile pointing to the style you want to use. Mine is:
+
+    session.styleFile: /usr/share/fluxbox/styles/bloe
+
+Add these font settings to ~/.fluxbox/overlay, preserving any other
+overlay settings you already use:
+
+    ! UW ttyp0 fonts for the Fluxbox interface.
+    menu.frame.font: Ttyp0 OTB:size=14
+    menu.title.font: Ttyp0 OTB:size=14:bold
+    toolbar.clock.font: Ttyp0 OTB:size=14
+    toolbar.workspace.font: Ttyp0 OTB:size=14
+    toolbar.iconbar.focused.font: Ttyp0 OTB:size=14:bold
+    toolbar.iconbar.unfocused.font: Ttyp0 OTB:size=14
+    window.font: Ttyp0 OTB:size=14
+
+These settings cover menus, the clock, workspace label, window list,
+and window titles. Menu titles and focused window-list entries use
+the bold variant. Colors, backgrounds, and other style properties
+continue to come from the selected theme unless overridden elsewhere.
+
+Confirm that both font styles are available:
+
+    fc-match -f '%{family}: %{style}\n' 'Ttyp0 OTB:size=14'
+    fc-match -f '%{family}: %{style}\n' 'Ttyp0 OTB:size=14:bold'
+
+The results should identify Ttyp0 OTB Regular and Bold respectively.
+
+From the running Fluxbox session, select Reconfigure from its menu,
+or run:
+
+    fluxbox-remote Reconfig
+
+Remote commands require session.screen0.allowRemoteActions to be
+enabled. If remote control is disabled, use the menu or a Reconfig
+key binding instead. My migrated keys also bind Super+r to Restart.
+
+If text is clipped, inspect the style's fixed heights. For example,
+bloe sets toolbar.height and window.title.height to 23 pixels. A
+22-pixel bitmap leaves little room for padding. If necessary, add
+larger heights in the overlay and reconfigure, for example:
+
+    toolbar.height: 28
+    window.title.height: 28
+
+These height overrides are optional; use them only if the text does
+not fit. They are not part of my font-only overlay above.
+
+The overlay configures Fluxbox's interface, not the fonts inside its
+applications. The same xterm and dmenu settings work under cwm or
+Fluxbox. My ~/.xinitrc.fluxbox already merges ~/.Xresources before
+starting Fluxbox; other session startup methods need to load those
+resources as well.
+
+
+DMENU
+
+dmenu uses its own font option. Setting XTerm*faceName does not
+configure dmenu.
+
+A standalone test is:
+
+    printf '%s\n' terminal browser editor | \
+      dmenu -fn 'Ttyp0 OTB:size=14' -i -p 'Test'
+
+In ~/.bin/menu, the end of the choice pipeline can be written as:
+
+    dmenu -fn 'Ttyp0 OTB:size=14' -i -l 14 -p "Menu"
+
+My current dmenu binary already has Ttyp0 OTB:size=14 compiled into
+its defaults, so the menu works without -fn. Passing -fn explicitly
+makes the script independent of that custom build.
+
+For a 22-pixel request instead of a point-size request, use:
+
+    dmenu -fn 'Ttyp0 OTB:pixelsize=22' -i -l 14 -p "Menu"
+
+Close and reopen dmenu after changing the font configuration.
+
+
+TROUBLESHOOTING
+
+If the font suddenly looks different or larger:
+
+    1. Check the actual match before changing sizes:
+
+       fc-match -f '%{family}\n%{file}\n' 'Ttyp0 OTB'
+
+    2. Check the active xterm resources:
+
+       xrdb -query | grep -iE 'xterm.*(face|font)|xft.dpi'
+
+    3. Check a font file independently of directory discovery:
+
+       fc-scan --format '%{family}\n%{pixelsize}\n' \
+         /usr/share/fonts/X11/misc/UW-Ttyp0-22-Regular.otb
+
+    4. After correcting the directory configuration, run fc-cache -f
+       and reopen the affected applications. Restart cwm or reload
+       the Fluxbox configuration if its interface needs refreshing.
+
+mkfontdir and mkfontscale maintain traditional X11 font indexes.
+They do not add a missing directory to Fontconfig's search list.
+Similarly, fc-cache cannot replace the missing directory rule.
+
+There is normally no need to reboot or leave X11 just to refresh
+the font in newly started applications.
+
+
+CONFIGURATION SUMMARY
+
+Each part of the setup has its own job:
+
+    /etc/default/rc.font
+        Selects the PSF font for the local Linux console.
+
+    ~/.config/fontconfig/fonts.conf
+        Makes the graphical font directory visible to my user.
+
+    ~/.Xresources
+        Selects the family and size for xterm and uxterm.
+
+    ~/.cwmrc
+        Selects the font for cwm's own interface.
+
+    ~/.fluxbox/init and ~/.fluxbox/overlay
+        Enable and define Fluxbox font overrides for the chosen style.
+
+    ~/.bin/menu or another dmenu launcher
+        Selects dmenu's font explicitly with -fn if desired.
+
+The essential check is to discover the installed names first, verify
+that Fontconfig finds the intended family, and then configure each
+application. This keeps the setup understandable when switching window
+managers or revisiting it after a package update.
+
+
+REFERENCES
+
+UW ttyp0:
+    https://people.mpi-inf.mpg.de/~uwe/misc/uw-ttyp0/
+
+Stylistic variants (selected when building the fonts):
+    https://people.mpi-inf.mpg.de/~uwe/misc/uw-ttyp0/Variants.html
+
+Local manuals:
+    man fonts-conf
+    man fc-match
+    man xterm
+    man dmenu
+    man cwmrc
+    man fluxbox-style
+    man fluxbox
+    man setfont
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-09-26
