@@ -24,7 +24,7 @@ Do not install LILO or ELILO. Instead, configure GRUB as follows:
 
 4. Copy the GRUB EFI file to the default boot location:
 
-   cp /boot/efi/EFI/slackware-15+/grubx64.efi /boot/efi/EFI/BOOT/Bootx64.efi
+   cp /boot/efi/EFI/Slackware-15+/grubx64.efi /boot/efi/EFI/BOOT/Bootx64.efi
 
 5. Generate an initial ramdisk:
 
@@ -120,4 +120,4 @@ based on your system firmware.
 
 ------------------------------------------------------------------
 
-Last Modified: 2026-01-03 00:00:00 UTC
+Last Modified: 2026-10-13 00:00:00 UTC
