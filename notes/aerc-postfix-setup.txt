@@ -1,0 +1,201 @@
+Configuring Postfix with Fastmail SMTP and aerc
+===============================================
+
+Overview:
+---------
+
+This gist provides a step-by-step guide to setting up Postfix
+to send emails through Fastmail's SMTP service securely.
+It also includes instructions for configuring aerc as an email client.
+
+The guide ensures security by using an app password,
+restricting permissions, and automating credential management with pass.
+
+For password-store configuration please take a look at:
+https://github.com/r1w1s1/code-notes/blob/main/notes/Password_Store_with_Git_Guide.txt
+
+1. First we need to generate the credencial for SMTP
+----------------------------------------------------
+
+Generating an SMTP App Password for Fastmail
+
+To securely authenticate with Fastmail's SMTP server, you need to generate an
+"app password" instead of using your main account password. Follow these steps:
+
+    1. Log in to your Fastmail account: https://www.fastmail.com/
+    2. Navigate to **Settings** → **Privacy & Security**.
+    3. Under **Connected Apps & API Tokens**, click **Manage App Passwords**.
+    4. Click **New App Password** and set up the following:
+       - **Name**: Choose a custom name (e.g., "Postfix SMTP" or "Laptop Mail").
+       - **Access**: Select **Mail (IMAP/POP/SMTP)**.
+    5. Click **Generate Password** and **copy** the password displayed.
+    6. Store this password securely, as you won’t be able to view it again.
+
+For more details, refer to the official Fastmail guide: Fastmail App Passwords:
+https://www.fastmail.help/hc/en-us/articles/360058752854-App-passwords
+
+
+2. Install/Configure Postifx
+----------------------------
+
+Install Postfix:
+
+    slackpkg install postfix
+
+Configure Postfix:
+
+Edit the main Postfix configuration file:
+
+    vim /etc/postfix/main.cf
+
+Add or modify the following lines:
+
+    # Listen only on localhost for security (prevents external access to Postfix)
+    inet_interfaces = 127.0.0.1
+
+    # Specify Fastmail as the smarthost on port 465 for SMTP over SSL/TLS
+    relayhost = [smtp.fastmail.com]:465
+
+    # Enable SASL authentication for the smarthost
+    smtp_sasl_auth_enable = yes
+    # Point to the file where SMTP authentication credentials are stored
+    smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+    # Prevent anonymous authentication to enhance security
+    smtp_sasl_security_options = noanonymous
+    # Limit SASL mechanisms to 'plain' and 'login' for security and compatibility
+    smtp_sasl_mechanism_filter = plain, login
+
+    # TLS Configuration for SMTPS
+    # Enforce TLS from the start of the connection (SMTPS)
+    smtp_tls_wrappermode = yes
+    # Require encryption for outgoing connections
+    smtp_tls_security_level = encrypt
+    # Exclude outdated and insecure SSL/TLS protocols
+    smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+    # Use only high-strength ciphers for better security
+    smtp_tls_ciphers = high
+    # Increase logging for TLS to aid in troubleshooting and monitoring
+    smtp_tls_loglevel = 1
+    # Specify the file for the CA certificates to verify the server's certificate
+    smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+
+    # Masquerade settings
+    # Change the domain part of email addresses to fastmail.com
+    masquerade_domains = fastmail.com
+    # Apply masquerading to both envelope and header sender addresses
+    masquerade_classes = envelope_sender, header_sender
+    # Exclude the 'root' user from masquerading to maintain system integrity
+    masquerade_exceptions = root
+
+This will route outgoing email through your local Postfix instance,
+which in turn sends it via Fastmail.
+
+
+3. Configure SASL Password File:
+--------------------------------
+
+Create or edit the sasl_passwd file:
+
+    vim /etc/postfix/sasl_passwd
+
+Add the following line with your Fastmail credentials:
+
+    [smtp.fastmail.com]:465    your-email@fastmail.com:your-app-password
+
+Format of sasl_passwd
+- Each line should contain the host and port followed by the username
+  and password separated by a space.
+- Use an app-specific password for security reasons rather than your
+  main account password.
+
+After editing, secure the file:
+
+    chmod 600 /etc/postfix/sasl_passwd
+
+Then, hash the file for Postfix to use:
+
+    postmap /etc/postfix/sasl_passwd
+
+Configure to start postfix automatically.
+
+    chmod +x /etc/rc.d/rc.postfix
+
+Test Sending Mail:
+
+    echo "Test email" | mail -s "Test Subject" recipient@example.com
+
+Restart Postfix to apply changes:
+
+    /etc/rc.d/rc.postfix restart
+
+Automation of sasl_passwd generation grab the password from pass.
+
+    #!/bin/sh
+
+    # Retrieve the password from pass
+    PASSWORD=$(pass show email/fastmail)
+
+    # Overwrite /etc/postfix/sasl_passwd securely
+    echo "[smtp.fastmail.com]:465 user@fastmail.com:$PASSWORD" | \
+    sudo tee /etc/postfix/sasl_passwd > /dev/null
+
+    # Set strict permissions
+    sudo chmod 600 /etc/postfix/sasl_passwd
+
+    # Update the Postfix hash database
+    sudo postmap /etc/postfix/sasl_passwd
+
+    # Reload Postfix to apply changes
+    sudo /etc/rc.d/rc.postfix reload
+
+Give permission
+
+   chmod 750 /path/to/your/script.sh
+   chown root:root /path/to/your/script.sh
+
+This script should be run as a regular user which has pass configured.
+I already sudo when needed for root permission.
+
+Optional
+Create aliases
+
+    alias update-postfix-sasl='sudo /path/to/your/script.sh'
+
+
+4. Configuring aerc to Use Postfix
+----------------------------------
+
+Install aerc:
+
+    slackpkg install aerc
+
+Configure aerc to send mail via Postfix:
+
+    mkdir -p ~/.config/aerc
+    cp /etc/aerc/accounts.conf ~/.config/aerc/
+    vim ~/.config/aerc/accounts.conf
+
+Add or modify the following settings:
+
+    [Fastmail]
+    source       = jmap+oauthbearer://user%40fastmail.com@api.fastmail.com/.well-known/jmap
+    outgoing     = /usr/sbin/sendmail -f user@fastmail.com
+    default      = INBOX
+    from         = user <user@fastmail.com>
+    use-labels   = true
+    cache-state  = true
+    cache-blobs  = true
+    folders-sort = Inbox
+    default = Inbox
+    signature-file = /home/user/.config/aerc/signature.txt
+    source-cred-cmd = "pass show email-service/fastmail/aerc-token | head -n 1"
+
+Restart aerc and test sending an email:
+
+    aerc
+    :send
+
+
+------------------------------------------------------------------
+
+Last Modified: 2026-10-16 14:01:02 UTC
