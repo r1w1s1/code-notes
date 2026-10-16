@@ -1,5 +1,5 @@
 #!/bin/sh
-# generate-rss.sh - build an RSS 2.0 feed from notes/*.txt
+# generate-rss.sh - build an RSS 2.0 feed from notes/*.txt and notes/*.TXT
 #
 #   title = first line of each note
 #   date  = the "Last Modified:" footer
@@ -53,7 +53,7 @@ EOF
 # Collect notes and sort by Last Modified date
 #
 
-for f in "$NOTES"/*.txt; do
+for f in "$NOTES"/*.txt "$NOTES"/*.TXT; do
     [ -f "$f" ] || continue
 
     d=$(grep '^Last Modified:' "$f" | tail -n 1 |

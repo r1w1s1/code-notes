@@ -4,8 +4,50 @@
 <title>code-notes</title>
 <link>https://github.com/r1w1s1/code-notes</link>
 <description>Concise technical notes on Slackware, Unix, and minimal tooling.</description>
-<lastBuildDate>Wed, 19 Aug 2026 19:50:12 +0000</lastBuildDate>
+<lastBuildDate>Fri, 16 Oct 2026 14:08:44 +0000</lastBuildDate>
 <atom:link href="https://raw.githubusercontent.com/r1w1s1/code-notes/master/rss.xml" rel="self" type="application/rss+xml" />
+<item>
+<title>Configuring Postfix with Fastmail SMTP and aerc</title>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/aerc-postfix-setup.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/aerc-postfix-setup.txt</guid>
+<pubDate>Fri, 16 Oct 2026 14:01:02 +0000</pubDate>
+<description><![CDATA[Overview: This gist provides a step-by-step guide to setting up Postfix to send emails through Fastmail's SMTP service securely. ]]></description>
+</item>
+<item>
+<title></title>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/README_BTRFS.TXT</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/README_BTRFS.TXT</guid>
+<pubDate>Fri, 16 Oct 2026 14:00:09 +0000</pubDate>
+<description><![CDATA[INSTALLING SLACKWARE64-CURRENT ON BTRFS SUBVOLUMES This is a short recipe for installing Slackware64-current with Btrfs subvolumes using the normal Slackware installer. ]]></description>
+</item>
+<item>
+<title>USING GRUB ON SLACKWARE-CURRENT (ALSO 15.0)</title>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/GRUB_Slackware_Guide.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/GRUB_Slackware_Guide.txt</guid>
+<pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
+<description><![CDATA[This guide applies to Slackware-current systems while LILO is still the default installer bootloader. GRUB setup remains an explicit, manual administrative choice. ]]></description>
+</item>
+<item>
+<title>MY UW TTYP0 SETUP</title>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/My_UW_Ttyp0_Setup.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/My_UW_Ttyp0_Setup.txt</guid>
+<pubDate>Sat, 26 Sep 2026 00:00:00 +0000</pubDate>
+<description><![CDATA[INTRODUCTION: ONE FAMILY, DIFFERENT FONT NAMES UW ttyp0 is a monospaced bitmap font family. I like its appearance both in graphical terminals and on the Linux text console. ]]></description>
+</item>
+<item>
+<title>IDEs, UNIX, AND THE OLD WORKFLOW THAT NEVER WENT AWAY</title>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Unix_As_An_IDE.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Unix_As_An_IDE.txt</guid>
+<pubDate>Wed, 23 Sep 2026 00:00:00 +0000</pubDate>
+<description><![CDATA[OVERVIEW Every few years the Linux and Unix world rediscovers the same idea: combining navigation, editing, search, and shell interaction into a ]]></description>
+</item>
+<item>
+<title>MY TMUX SETUP</title>
+<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/My_TMUX_Setup.txt</link>
+<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/My_TMUX_Setup.txt</guid>
+<pubDate>Wed, 23 Sep 2026 00:00:00 +0000</pubDate>
+<description><![CDATA[OVERVIEW I use tmux as the session manager for my terminal workflow. The session runs inside xterm and remains available when the ]]></description>
+</item>
 <item>
 <title>X11 SERVERFLAGS: DONTZAP AND DONTVTSWITCH</title>
 <link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/X11_ServerFlags.txt</link>
@@ -61,13 +103,6 @@
 <guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Window_Manager_Agnostic_Workflows.txt</guid>
 <pubDate>Tue, 12 May 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[OVERVIEW Many lightweight window managers provide their own systems for: - keybindings ]]></description>
-</item>
-<item>
-<title>IDEs, UNIX, AND THE OLD WORKFLOW THAT NEVER WENT AWAY</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Unix_As_An_IDE.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Unix_As_An_IDE.txt</guid>
-<pubDate>Sun, 10 May 2026 00:00:00 +0000</pubDate>
-<description><![CDATA[OVERVIEW Every few years the Linux and Unix world rediscovers the same idea: combining navigation, editing, search, and shell interaction into a ]]></description>
 </item>
 <item>
 <title>NVI FAQ</title>
@@ -263,7 +298,7 @@
 <link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Kernel_Build_Guide.txt</link>
 <guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Slackware_Kernel_Build_Guide.txt</guid>
 <pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate>
-<description><![CDATA[This guide uses Slackware's testing/source kernel tree as a base and upgrades it to a newer upstream version while preserving Slackware structure. ]]></description>
+<description><![CDATA[This guide uses Slackware's testing/source kernel tree as a base for upgrading to a newer upstream version while preserving Slackware's structure. ]]></description>
 </item>
 <item>
 <title>INSTALLING FIREFOX NIGHTLY ON SLACKWARE</title>
@@ -278,13 +313,6 @@
 <guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/Install_Vim_Plug.txt</guid>
 <pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate>
 <description><![CDATA[How to Install vim-plug (https://github.com/junegunn/vim-plug) vim .vimrc let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim' ]]></description>
-</item>
-<item>
-<title>USING GRUB ON SLACKWARE-CURRENT (ALSO 15.0)</title>
-<link>https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/GRUB_Slackware_Guide.txt</link>
-<guid isPermaLink="true">https://raw.githubusercontent.com/r1w1s1/code-notes/master/notes/GRUB_Slackware_Guide.txt</guid>
-<pubDate>Sat, 03 Jan 2026 00:00:00 +0000</pubDate>
-<description><![CDATA[This guide applies to Slackware-current systems while LILO is still the default installer bootloader. GRUB setup remains an explicit, manual administrative choice. ]]></description>
 </item>
 <item>
 <title>USING GRUB 2.12 IN SLACKWARE-CURRENT (15.1)</title>
